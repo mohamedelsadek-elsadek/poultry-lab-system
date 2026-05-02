@@ -189,6 +189,27 @@ paths:
         "204":
           description: Deleted
 
+  /houses/{houseId}/performance-report:
+    get:
+      operationId: getHousePerformanceReport
+      tags: [houses]
+      summary: Get performance report comparing active cycle against historical averages
+      parameters:
+        - name: houseId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Performance report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HousePerformanceReport"
+        "404":
+          description: Not found
+
   /cycles/{cycleId}/mortality:
     get:
       operationId: listMortalityLogs
@@ -551,6 +572,105 @@ components:
         averageMortalityRate:
           type: number
       required: [houseId, houseName, houseNameAr, cycleCount, totalProfit, averageFcr, averageMortalityRate]
+
+    CycleSnapshot:
+      type: object
+      properties:
+        cycleId:
+          type: integer
+        cycleNumber:
+          type: integer
+        housingDate:
+          type: string
+        daysElapsed:
+          type: integer
+        chickCount:
+          type: integer
+        currentMortality:
+          type: integer
+        mortalityRate:
+          type: number
+        totalFeedKg:
+          type: number
+        feedCostSoFar:
+          type: number
+        estimatedFcr:
+          type: number
+        totalCostSoFar:
+          type: number
+        costPerLiveKgSoFar:
+          type: number
+        status:
+          type: string
+      required: [cycleId, cycleNumber, housingDate, daysElapsed, chickCount, status]
+
+    HistoricalAvg:
+      type: object
+      properties:
+        cycleCount:
+          type: integer
+        avgFcr:
+          type: number
+        avgMortalityRate:
+          type: number
+        avgNetProfit:
+          type: number
+        avgCostPerLiveKg:
+          type: number
+        avgChickCount:
+          type: number
+        avgDaysToSale:
+          type: number
+      required: [cycleCount, avgFcr, avgMortalityRate, avgNetProfit, avgCostPerLiveKg, avgChickCount, avgDaysToSale]
+
+    TrendIndicator:
+      type: string
+      enum: [improving, neutral, declining, insufficient_data]
+
+    HousePerformanceReport:
+      type: object
+      properties:
+        houseId:
+          type: integer
+        houseName:
+          type: string
+        houseNameAr:
+          type: string
+        activeCycle:
+          $ref: "#/components/schemas/CycleSnapshot"
+        historicalAvg:
+          $ref: "#/components/schemas/HistoricalAvg"
+        trends:
+          type: object
+          properties:
+            fcr:
+              $ref: "#/components/schemas/TrendIndicator"
+            mortalityRate:
+              $ref: "#/components/schemas/TrendIndicator"
+            costPerLiveKg:
+              $ref: "#/components/schemas/TrendIndicator"
+          required: [fcr, mortalityRate, costPerLiveKg]
+        cycleHistory:
+          type: array
+          items:
+            type: object
+            properties:
+              cycleNumber:
+                type: integer
+              housingDate:
+                type: string
+              fcr:
+                type: number
+              mortalityRate:
+                type: number
+              netProfit:
+                type: number
+              costPerLiveKg:
+                type: number
+              status:
+                type: string
+            required: [cycleNumber, housingDate, status]
+      required: [houseId, houseName, houseNameAr, historicalAvg, trends, cycleHistory]
 
     MortalityLog:
       type: object

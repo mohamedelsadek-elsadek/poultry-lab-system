@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowRight, Factory, History, AlertCircle } from "lucide-react";
+import { ArrowRight, Factory, History, AlertCircle, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function HouseDetail() {
@@ -52,9 +52,17 @@ export default function HouseDetail() {
           <History className="h-6 w-6" />
           سجل الدورات
         </h2>
-        <Link href={`/cycles/new?farmId=${farmId}&houseId=${houseId}`}>
-          <Button>بدء دورة جديدة</Button>
-        </Link>
+        <div className="flex gap-2">
+          <Link href={`/farms/${farmId}/houses/${houseId}/report`}>
+            <Button variant="outline" className="gap-2">
+              <BarChart3 className="h-4 w-4" />
+              تقرير الأداء
+            </Button>
+          </Link>
+          <Link href={`/cycles/new?farmId=${farmId}&houseId=${houseId}`}>
+            <Button>بدء دورة جديدة</Button>
+          </Link>
+        </div>
       </div>
 
       <Card>

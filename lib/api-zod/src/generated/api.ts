@@ -212,6 +212,71 @@ export const DeleteCycleParams = zod.object({
 });
 
 /**
+ * @summary Get performance report comparing active cycle against historical averages
+ */
+export const GetHousePerformanceReportParams = zod.object({
+  houseId: zod.coerce.number(),
+});
+
+export const GetHousePerformanceReportResponse = zod.object({
+  houseId: zod.number(),
+  houseName: zod.string(),
+  houseNameAr: zod.string(),
+  activeCycle: zod
+    .object({
+      cycleId: zod.number(),
+      cycleNumber: zod.number(),
+      housingDate: zod.string(),
+      daysElapsed: zod.number(),
+      chickCount: zod.number(),
+      currentMortality: zod.number().optional(),
+      mortalityRate: zod.number().optional(),
+      totalFeedKg: zod.number().optional(),
+      feedCostSoFar: zod.number().optional(),
+      estimatedFcr: zod.number().optional(),
+      totalCostSoFar: zod.number().optional(),
+      costPerLiveKgSoFar: zod.number().optional(),
+      status: zod.string(),
+    })
+    .optional(),
+  historicalAvg: zod.object({
+    cycleCount: zod.number(),
+    avgFcr: zod.number(),
+    avgMortalityRate: zod.number(),
+    avgNetProfit: zod.number(),
+    avgCostPerLiveKg: zod.number(),
+    avgChickCount: zod.number(),
+    avgDaysToSale: zod.number(),
+  }),
+  trends: zod.object({
+    fcr: zod.enum(["improving", "neutral", "declining", "insufficient_data"]),
+    mortalityRate: zod.enum([
+      "improving",
+      "neutral",
+      "declining",
+      "insufficient_data",
+    ]),
+    costPerLiveKg: zod.enum([
+      "improving",
+      "neutral",
+      "declining",
+      "insufficient_data",
+    ]),
+  }),
+  cycleHistory: zod.array(
+    zod.object({
+      cycleNumber: zod.number(),
+      housingDate: zod.string(),
+      fcr: zod.number().optional(),
+      mortalityRate: zod.number().optional(),
+      netProfit: zod.number().optional(),
+      costPerLiveKg: zod.number().optional(),
+      status: zod.string(),
+    }),
+  ),
+});
+
+/**
  * @summary List daily mortality logs for a cycle
  */
 export const ListMortalityLogsParams = zod.object({

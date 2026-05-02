@@ -153,6 +153,68 @@ export interface FarmDashboard {
   houseComparison: HouseStats[];
 }
 
+export interface CycleSnapshot {
+  cycleId: number;
+  cycleNumber: number;
+  housingDate: string;
+  daysElapsed: number;
+  chickCount: number;
+  currentMortality?: number;
+  mortalityRate?: number;
+  totalFeedKg?: number;
+  feedCostSoFar?: number;
+  estimatedFcr?: number;
+  totalCostSoFar?: number;
+  costPerLiveKgSoFar?: number;
+  status: string;
+}
+
+export interface HistoricalAvg {
+  cycleCount: number;
+  avgFcr: number;
+  avgMortalityRate: number;
+  avgNetProfit: number;
+  avgCostPerLiveKg: number;
+  avgChickCount: number;
+  avgDaysToSale: number;
+}
+
+export type TrendIndicator =
+  (typeof TrendIndicator)[keyof typeof TrendIndicator];
+
+export const TrendIndicator = {
+  improving: "improving",
+  neutral: "neutral",
+  declining: "declining",
+  insufficient_data: "insufficient_data",
+} as const;
+
+export type HousePerformanceReportTrends = {
+  fcr: TrendIndicator;
+  mortalityRate: TrendIndicator;
+  costPerLiveKg: TrendIndicator;
+};
+
+export type HousePerformanceReportCycleHistoryItem = {
+  cycleNumber: number;
+  housingDate: string;
+  fcr?: number;
+  mortalityRate?: number;
+  netProfit?: number;
+  costPerLiveKg?: number;
+  status: string;
+};
+
+export interface HousePerformanceReport {
+  houseId: number;
+  houseName: string;
+  houseNameAr: string;
+  activeCycle?: CycleSnapshot;
+  historicalAvg: HistoricalAvg;
+  trends: HousePerformanceReportTrends;
+  cycleHistory: HousePerformanceReportCycleHistoryItem[];
+}
+
 export interface MortalityLog {
   id: number;
   cycleId: number;

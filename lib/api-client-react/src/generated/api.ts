@@ -27,6 +27,7 @@ import type {
   FarmPerformance,
   HealthStatus,
   House,
+  HousePerformanceReport,
   MortalityLog,
 } from "./api.schemas";
 
@@ -772,6 +773,101 @@ export const useDeleteCycle = <
 > => {
   return useMutation(getDeleteCycleMutationOptions(options));
 };
+
+/**
+ * @summary Get performance report comparing active cycle against historical averages
+ */
+export const getGetHousePerformanceReportUrl = (houseId: number) => {
+  return `/api/houses/${houseId}/performance-report`;
+};
+
+export const getHousePerformanceReport = async (
+  houseId: number,
+  options?: RequestInit,
+): Promise<HousePerformanceReport> => {
+  return customFetch<HousePerformanceReport>(
+    getGetHousePerformanceReportUrl(houseId),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getGetHousePerformanceReportQueryKey = (houseId: number) => {
+  return [`/api/houses/${houseId}/performance-report`] as const;
+};
+
+export const getGetHousePerformanceReportQueryOptions = <
+  TData = Awaited<ReturnType<typeof getHousePerformanceReport>>,
+  TError = ErrorType<void>,
+>(
+  houseId: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getHousePerformanceReport>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetHousePerformanceReportQueryKey(houseId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getHousePerformanceReport>>
+  > = ({ signal }) =>
+    getHousePerformanceReport(houseId, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!houseId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getHousePerformanceReport>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetHousePerformanceReportQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getHousePerformanceReport>>
+>;
+export type GetHousePerformanceReportQueryError = ErrorType<void>;
+
+/**
+ * @summary Get performance report comparing active cycle against historical averages
+ */
+
+export function useGetHousePerformanceReport<
+  TData = Awaited<ReturnType<typeof getHousePerformanceReport>>,
+  TError = ErrorType<void>,
+>(
+  houseId: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getHousePerformanceReport>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetHousePerformanceReportQueryOptions(
+    houseId,
+    options,
+  );
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 /**
  * @summary List daily mortality logs for a cycle

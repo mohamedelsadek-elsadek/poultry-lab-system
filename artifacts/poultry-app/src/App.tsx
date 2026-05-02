@@ -9,6 +9,7 @@ import FarmDashboard from "@/pages/FarmDashboard";
 import HouseDetail from "@/pages/HouseDetail";
 import CycleForm from "@/pages/CycleForm";
 import CycleDetail from "@/pages/CycleDetail";
+import PerformanceReport from "@/pages/PerformanceReport";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -27,6 +28,7 @@ function Router() {
         <Route path="/" component={Dashboard} />
         <Route path="/farms" component={FarmsList} />
         <Route path="/farms/:farmId" component={FarmDashboard} />
+        <Route path="/farms/:farmId/houses/:houseId/report" component={PerformanceReport} />
         <Route path="/farms/:farmId/houses/:houseId" component={HouseDetail} />
         <Route path="/cycles/new" component={CycleForm} />
         <Route path="/cycles/:cycleId/edit" component={CycleForm} />
