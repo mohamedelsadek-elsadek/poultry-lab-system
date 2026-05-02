@@ -4,7 +4,7 @@ import { farmsTable, housesTable, cyclesTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
 import { GetFarmDashboardParams } from "@workspace/api-zod";
 import { computeMetrics, formatCycle } from "./cycles";
-import type { Cycle } from "@workspace/db";
+import type { Cycle, Farm, House } from "@workspace/db";
 
 const router: IRouter = Router();
 
@@ -56,13 +56,13 @@ router.get("/dashboard/summary", async (req, res) => {
 });
 
 async function buildFarmsPerformance(
-  farms: Awaited<ReturnType<typeof db.select>>[],
-  houses: Awaited<ReturnType<typeof db.select>>[],
-  allCycles: Awaited<ReturnType<typeof db.select>>[],
+  farms: Farm[],
+  houses: House[],
+  allCycles: Cycle[],
 ) {
-  const farmsData = farms as Array<{ id: number; name: string; nameAr: string }>;
-  const housesData = houses as Array<{ id: number; farmId: number }>;
-  const cyclesData = allCycles as Cycle[];
+  const farmsData = farms;
+  const housesData = houses;
+  const cyclesData = allCycles;
 
   return farmsData.map((farm, idx) => {
     const farmHouseIds = housesData.filter((h) => h.farmId === farm.id).map((h) => h.id);

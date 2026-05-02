@@ -189,6 +189,70 @@ paths:
         "204":
           description: Deleted
 
+  /cycles/{cycleId}/mortality:
+    get:
+      operationId: listMortalityLogs
+      tags: [cycles]
+      summary: List daily mortality logs for a cycle
+      parameters:
+        - name: cycleId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of mortality logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MortalityLog"
+    post:
+      operationId: addMortalityLog
+      tags: [cycles]
+      summary: Add a daily mortality log entry
+      parameters:
+        - name: cycleId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddMortalityLogBody"
+      responses:
+        "201":
+          description: Log created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MortalityLog"
+
+  /cycles/{cycleId}/mortality/{logId}:
+    delete:
+      operationId: deleteMortalityLog
+      tags: [cycles]
+      summary: Delete a mortality log entry
+      parameters:
+        - name: cycleId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: logId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
   /dashboard/summary:
     get:
       operationId: getCompanySummary
@@ -487,6 +551,37 @@ components:
         averageMortalityRate:
           type: number
       required: [houseId, houseName, houseNameAr, cycleCount, totalProfit, averageFcr, averageMortalityRate]
+
+    MortalityLog:
+      type: object
+      properties:
+        id:
+          type: integer
+        cycleId:
+          type: integer
+        logDate:
+          type: string
+          format: date
+        count:
+          type: integer
+        notes:
+          type: string
+        createdAt:
+          type: string
+      required: [id, cycleId, logDate, count, createdAt]
+
+    AddMortalityLogBody:
+      type: object
+      properties:
+        logDate:
+          type: string
+          format: date
+        count:
+          type: integer
+          minimum: 1
+        notes:
+          type: string
+      required: [logDate, count]
 
     CycleWithContext:
       type: object

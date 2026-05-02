@@ -39,6 +39,19 @@ export const cyclesTable = pgTable("cycles", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const mortalityLogsTable = pgTable("mortality_logs", {
+  id: serial("id").primaryKey(),
+  cycleId: integer("cycle_id").notNull().references(() => cyclesTable.id, { onDelete: "cascade" }),
+  logDate: text("log_date").notNull(),
+  count: integer("count").notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertMortalityLogSchema = createInsertSchema(mortalityLogsTable).omit({ id: true, createdAt: true });
+export type MortalityLog = typeof mortalityLogsTable.$inferSelect;
+export type InsertMortalityLog = z.infer<typeof insertMortalityLogSchema>;
+
 export const insertFarmSchema = createInsertSchema(farmsTable).omit({ id: true, createdAt: true });
 export const insertHouseSchema = createInsertSchema(housesTable).omit({ id: true, createdAt: true });
 export const insertCycleSchema = createInsertSchema(cyclesTable).omit({ id: true, createdAt: true, updatedAt: true });

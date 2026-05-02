@@ -17,6 +17,7 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+  AddMortalityLogBody,
   CompanySummary,
   CreateCycleBody,
   Cycle,
@@ -26,6 +27,7 @@ import type {
   FarmPerformance,
   HealthStatus,
   House,
+  MortalityLog,
 } from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
@@ -769,6 +771,266 @@ export const useDeleteCycle = <
   TContext
 > => {
   return useMutation(getDeleteCycleMutationOptions(options));
+};
+
+/**
+ * @summary List daily mortality logs for a cycle
+ */
+export const getListMortalityLogsUrl = (cycleId: number) => {
+  return `/api/cycles/${cycleId}/mortality`;
+};
+
+export const listMortalityLogs = async (
+  cycleId: number,
+  options?: RequestInit,
+): Promise<MortalityLog[]> => {
+  return customFetch<MortalityLog[]>(getListMortalityLogsUrl(cycleId), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListMortalityLogsQueryKey = (cycleId: number) => {
+  return [`/api/cycles/${cycleId}/mortality`] as const;
+};
+
+export const getListMortalityLogsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listMortalityLogs>>,
+  TError = ErrorType<unknown>,
+>(
+  cycleId: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listMortalityLogs>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getListMortalityLogsQueryKey(cycleId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listMortalityLogs>>
+  > = ({ signal }) => listMortalityLogs(cycleId, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!cycleId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof listMortalityLogs>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListMortalityLogsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listMortalityLogs>>
+>;
+export type ListMortalityLogsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List daily mortality logs for a cycle
+ */
+
+export function useListMortalityLogs<
+  TData = Awaited<ReturnType<typeof listMortalityLogs>>,
+  TError = ErrorType<unknown>,
+>(
+  cycleId: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listMortalityLogs>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListMortalityLogsQueryOptions(cycleId, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Add a daily mortality log entry
+ */
+export const getAddMortalityLogUrl = (cycleId: number) => {
+  return `/api/cycles/${cycleId}/mortality`;
+};
+
+export const addMortalityLog = async (
+  cycleId: number,
+  addMortalityLogBody: AddMortalityLogBody,
+  options?: RequestInit,
+): Promise<MortalityLog> => {
+  return customFetch<MortalityLog>(getAddMortalityLogUrl(cycleId), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(addMortalityLogBody),
+  });
+};
+
+export const getAddMortalityLogMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof addMortalityLog>>,
+    TError,
+    { cycleId: number; data: BodyType<AddMortalityLogBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof addMortalityLog>>,
+  TError,
+  { cycleId: number; data: BodyType<AddMortalityLogBody> },
+  TContext
+> => {
+  const mutationKey = ["addMortalityLog"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof addMortalityLog>>,
+    { cycleId: number; data: BodyType<AddMortalityLogBody> }
+  > = (props) => {
+    const { cycleId, data } = props ?? {};
+
+    return addMortalityLog(cycleId, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AddMortalityLogMutationResult = NonNullable<
+  Awaited<ReturnType<typeof addMortalityLog>>
+>;
+export type AddMortalityLogMutationBody = BodyType<AddMortalityLogBody>;
+export type AddMortalityLogMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Add a daily mortality log entry
+ */
+export const useAddMortalityLog = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof addMortalityLog>>,
+    TError,
+    { cycleId: number; data: BodyType<AddMortalityLogBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof addMortalityLog>>,
+  TError,
+  { cycleId: number; data: BodyType<AddMortalityLogBody> },
+  TContext
+> => {
+  return useMutation(getAddMortalityLogMutationOptions(options));
+};
+
+/**
+ * @summary Delete a mortality log entry
+ */
+export const getDeleteMortalityLogUrl = (cycleId: number, logId: number) => {
+  return `/api/cycles/${cycleId}/mortality/${logId}`;
+};
+
+export const deleteMortalityLog = async (
+  cycleId: number,
+  logId: number,
+  options?: RequestInit,
+): Promise<void> => {
+  return customFetch<void>(getDeleteMortalityLogUrl(cycleId, logId), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteMortalityLogMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteMortalityLog>>,
+    TError,
+    { cycleId: number; logId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteMortalityLog>>,
+  TError,
+  { cycleId: number; logId: number },
+  TContext
+> => {
+  const mutationKey = ["deleteMortalityLog"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteMortalityLog>>,
+    { cycleId: number; logId: number }
+  > = (props) => {
+    const { cycleId, logId } = props ?? {};
+
+    return deleteMortalityLog(cycleId, logId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteMortalityLogMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteMortalityLog>>
+>;
+
+export type DeleteMortalityLogMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Delete a mortality log entry
+ */
+export const useDeleteMortalityLog = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteMortalityLog>>,
+    TError,
+    { cycleId: number; logId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteMortalityLog>>,
+  TError,
+  { cycleId: number; logId: number },
+  TContext
+> => {
+  return useMutation(getDeleteMortalityLogMutationOptions(options));
 };
 
 /**

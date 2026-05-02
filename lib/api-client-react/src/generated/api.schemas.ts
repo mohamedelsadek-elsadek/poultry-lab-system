@@ -153,6 +153,22 @@ export interface FarmDashboard {
   houseComparison: HouseStats[];
 }
 
+export interface MortalityLog {
+  id: number;
+  cycleId: number;
+  logDate: string;
+  count: number;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface AddMortalityLogBody {
+  logDate: string;
+  /** @minimum 1 */
+  count: number;
+  notes?: string;
+}
+
 export interface CycleWithContext {
   cycle: Cycle;
   farmName: string;

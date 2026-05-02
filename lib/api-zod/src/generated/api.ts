@@ -212,6 +212,46 @@ export const DeleteCycleParams = zod.object({
 });
 
 /**
+ * @summary List daily mortality logs for a cycle
+ */
+export const ListMortalityLogsParams = zod.object({
+  cycleId: zod.coerce.number(),
+});
+
+export const ListMortalityLogsResponseItem = zod.object({
+  id: zod.number(),
+  cycleId: zod.number(),
+  logDate: zod.coerce.date(),
+  count: zod.number(),
+  notes: zod.string().optional(),
+  createdAt: zod.string(),
+});
+export const ListMortalityLogsResponse = zod.array(
+  ListMortalityLogsResponseItem,
+);
+
+/**
+ * @summary Add a daily mortality log entry
+ */
+export const AddMortalityLogParams = zod.object({
+  cycleId: zod.coerce.number(),
+});
+
+export const AddMortalityLogBody = zod.object({
+  logDate: zod.coerce.date(),
+  count: zod.number().min(1),
+  notes: zod.string().optional(),
+});
+
+/**
+ * @summary Delete a mortality log entry
+ */
+export const DeleteMortalityLogParams = zod.object({
+  cycleId: zod.coerce.number(),
+  logId: zod.coerce.number(),
+});
+
+/**
  * @summary Get company-wide summary stats
  */
 export const GetCompanySummaryResponse = zod.object({
