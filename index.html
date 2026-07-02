@@ -267,6 +267,9 @@ html[data-theme="dark"] .pill.New{color:#f5c877}
 .titre-input-tbl td.idx{width:44px;text-align:center;color:var(--muted);font-size:12px;background:var(--surface-2)}
 .titre-input-tbl input{border:none;width:100%;padding:6px 8px;background:transparent;color:var(--ink);font-family:monospace;text-align:left}
 .titre-input-tbl input:focus{outline:2px solid var(--amber);outline-offset:-2px}
+.test-group{margin-bottom:14px}
+.test-group .tg-head{font-weight:700;font-size:13px;color:var(--amber-d);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.test-group .testGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
 
 .addbtn{font-size:12px;color:var(--amber-d);background:none;border:none;cursor:pointer;font-weight:700;margin-top:8px}
 .removebtn{background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;line-height:1}
@@ -349,7 +352,7 @@ html[dir="rtl"] .interp-tbl th,html[dir="rtl"] .interp-tbl td{text-align:right}
       <button class="theme-toggle" id="langBtn" aria-label="Toggle language" style="margin-bottom:8px"><span>&#127760;</span><span id="langLbl">العربية</span></button>
       <button class="theme-toggle" id="themeBtn" aria-label="Toggle theme"><span id="themeIco"></span><span id="themeLbl">Dark mode</span></button>
       <button class="theme-toggle" id="updateBtn" aria-label="Check for updates" style="margin-top:8px"><span>&#8635;</span><span data-i18n="upd.check">Check for updates</span></button>
-      <div class="ver" id="verLabel">Version 2.9.0</div>
+      <div class="ver" id="verLabel">Version 2.9.2</div>
       <div class="ver" id="updMsg" style="font-size:10px;margin-top:2px"></div>
     </div>
   </aside>
@@ -392,20 +395,6 @@ html[dir="rtl"] .interp-tbl th,html[dir="rtl"] .interp-tbl td{text-align:right}
           <div class="card"><h3 data-i18n="dash.activity">Recent activity</h3><div id="dashActivity"></div></div>
         </div>
         <div class="card"><h3 data-i18n="dash.alerts">Smart alerts</h3><div id="dashAlerts"></div></div>
-        <div class="card"><h3 data-i18n="dtv.title">IBD vaccination day - quick estimate</h3>
-          <p class="hint" data-i18n="dtv.hint" style="margin-bottom:10px">Quick single-value estimate from a mean titre. For the accurate Deventer (Mon3m) calculation using individual titres, enter an IBD serology result in My Submissions and use the calculator inside the result panel.</p>
-          <div class="row3">
-            <div class="fld"><label data-i18n="dtv.titre">Day-old mean titre</label><input id="dtvTitre" type="number" min="0" placeholder="e.g. 4057"></div>
-            <div class="fld"><label data-i18n="dtv.cv">CV %</label><input id="dtvCv" type="number" min="0" placeholder="e.g. 48"></div>
-            <div class="fld"><label data-i18n="dtv.bird">Bird type</label><select id="dtvBird"><option value="broiler" data-i18n="dtv.broiler">Broiler</option><option value="breeder" data-i18n="dtv.breeder">Breeder</option><option value="layer" data-i18n="dtv.layer">Layer</option></select></div>
-          </div>
-          <div class="row3">
-            <div class="fld"><label data-i18n="dtv.vaccine">Vaccine type</label><select id="dtvVax"><option value="175" data-i18n="dtv.interm">Intermediate (target 100-250)</option><option value="450" data-i18n="dtv.plus">Intermediate Plus (target 400-500)</option></select></div>
-            <div class="fld"><label data-i18n="dtv.bleed">Bleeding age (days)</label><input id="dtvBleed" type="number" min="0" value="1"></div>
-            <div class="fld" style="display:flex;align-items:flex-end"><button class="btn" id="dtvCalc" style="width:100%" data-i18n="dtv.calc">Calculate</button></div>
-          </div>
-          <div id="dtvResult"></div>
-        </div>
         <div class="card"><h3 data-i18n="dev.title">IBD Vaccination Day (Mon3m - Deventer formula)</h3>
           <p class="hint" data-i18n="dev.dashHint" style="margin-bottom:10px">The accurate Deventer calculation with individual titres, multiple vaccinations and editable flock percentiles lives in its own tab.</p>
           <button class="btn" id="devGoBtn" data-i18n="dev.open">Open Deventer calculator</button>
@@ -612,70 +601,70 @@ html[dir="rtl"] .interp-tbl th,html[dir="rtl"] .interp-tbl td{text-align:right}
 <script>
 "use strict";
 /* Build metadata - single source of truth for version display + update checks */
-const BUILD={version:"2.9.0",date:"2026-07-02",label:"v2.9.0 (2026-07-02)"};
+const BUILD={version:"2.9.2",date:"2026-07-02",label:"v2.9.2 (2026-07-02)"};
 /* Geography data: Egypt (governorate -> cities) + Saudi Arabia (region -> governorate -> cities)
    Postal codes: Egypt uses per-governorate representative codes; KSA uses region-level short codes.
    Compiled offline. Not exhaustive to every village; covers governorates/regions and major cities. */
 const GEO={
   Egypt:{type:"gov",label_en:"Egypt",label_ar:"مصر",
     govs:{
-      "Cairo|القاهرة":{pc:"11511",cities:["Nasr City|مدينة نصر","Maadi|المعادي","Heliopolis|مصر الجديدة","Helwan|حلوان","New Cairo|القاهرة الجديدة","Shubra|شبرا","Downtown|وسط البلد"]},
-      "Giza|الجيزة":{pc:"12511",cities:["Giza|الجيزة","6th of October|السادس من أكتوبر","Sheikh Zayed|الشيخ زايد","Dokki|الدقي","Haram|الهرم","Badrashin|البدرشين","Saff|الصف"]},
-      "Alexandria|الإسكندرية":{pc:"21500",cities:["Alexandria|الإسكندرية","Borg El Arab|برج العرب","Amreya|العامرية","Montaza|المنتزه"]},
-      "Dakahlia|الدقهلية":{pc:"35511",cities:["Mansoura|المنصورة","Talkha|طلخا","Mit Ghamr|ميت غمر","Aga|أجا","Belqas|بلقاس","Dekernes|دكرنس"]},
-      "Sharqia|الشرقية":{pc:"44511",cities:["Zagazig|الزقازيق","10th of Ramadan|العاشر من رمضان","Bilbeis|بلبيس","Abu Hammad|أبو حماد","Faqous|فاقوس","Minya al-Qamh|منيا القمح"]},
-      "Qalyubia|القليوبية":{pc:"13511",cities:["Banha|بنها","Qalyub|قليوب","Shubra El Kheima|شبرا الخيمة","Qanater|القناطر الخيرية","Khanka|الخانكة","Khosous|الخصوص"]},
-      "Kafr El Sheikh|كفر الشيخ":{pc:"33511",cities:["Kafr El Sheikh|كفر الشيخ","Desouk|دسوق","Fuwa|فوه","Baltim|بلطيم","Metoubes|مطوبس"]},
-      "Gharbia|الغربية":{pc:"31511",cities:["Tanta|طنطا","El Mahalla El Kubra|المحلة الكبرى","Kafr El Zayat|كفر الزيات","Zefta|زفتى","Samannoud|سمنود","Basyoun|بسيون"]},
-      "Monufia|المنوفية":{pc:"32511",cities:["Shibin El Kom|شبين الكوم","Menouf|منوف","Sadat City|مدينة السادات","Ashmoun|أشمون","Quesna|قويسنا","Berket El Sabaa|بركة السبع"]},
-      "Beheira|البحيرة":{pc:"22511",cities:["Damanhour|دمنهور","Kafr El Dawwar|كفر الدوار","Rashid|رشيد","Edku|إدكو","Abu Hummus|أبو حمص","Kom Hamada|كوم حمادة"]},
-      "Ismailia|الإسماعيلية":{pc:"41511",cities:["Ismailia|الإسماعيلية","Fayed|فايد","Qantara|القنطرة","Tell El Kebir|التل الكبير"]},
-      "Port Said|بورسعيد":{pc:"42511",cities:["Port Said|بورسعيد","Port Fouad|بورفؤاد"]},
-      "Suez|السويس":{pc:"43511",cities:["Suez|السويس","Ain Sokhna|العين السخنة"]},
-      "Damietta|دمياط":{pc:"34511",cities:["Damietta|دمياط","New Damietta|دمياط الجديدة","Ras El Bar|رأس البر","Faraskur|فارسكور","Kafr Saad|كفر سعد"]},
-      "Fayoum|الفيوم":{pc:"63511",cities:["Fayoum|الفيوم","Sinnuris|سنورس","Tamiya|طامية","Ibsheway|إبشواي","Yousef El Seddik|يوسف الصديق"]},
-      "Beni Suef|بني سويف":{pc:"62511",cities:["Beni Suef|بني سويف","Nasser|ناصر","Wasta|الواسطى","Biba|ببا","Fashn|الفشن","Sumusta|سمسطا"]},
-      "Minya|المنيا":{pc:"61511",cities:["Minya|المنيا","Mallawi|ملوي","Bani Mazar|بني مزار","Maghagha|مغاغة","Samalut|سمالوط","Matay|مطاي","Abu Qurqas|أبو قرقاص"]},
-      "Assiut|أسيوط":{pc:"71511",cities:["Assiut|أسيوط","Dairut|ديروط","Manfalut|منفلوط","Abnub|أبنوب","Abu Tig|أبو تيج","El Badari|البداري"]},
-      "Sohag|سوهاج":{pc:"82511",cities:["Sohag|سوهاج","Akhmim|أخميم","Girga|جرجا","Tahta|طهطا","Tema|طما","Maragha|المراغة","Balyana|البلينا"]},
-      "Qena|قنا":{pc:"83511",cities:["Qena|قنا","Nag Hammadi|نجع حمادي","Qus|قوص","Deshna|دشنا","Naqada|نقادة","Farshut|فرشوط"]},
-      "Luxor|الأقصر":{pc:"85511",cities:["Luxor|الأقصر","Esna|إسنا","Armant|أرمنت","Qurna|القرنة"]},
-      "Aswan|أسوان":{pc:"81511",cities:["Aswan|أسوان","Kom Ombo|كوم أمبو","Edfu|إدفو","Daraw|دراو","Nasr El Nuba|نصر النوبة"]},
-      "Red Sea|البحر الأحمر":{pc:"84511",cities:["Hurghada|الغردقة","Safaga|سفاجا","Quseir|القصير","Marsa Alam|مرسى علم","Ras Gharib|رأس غارب"]},
-      "New Valley|الوادي الجديد":{pc:"72511",cities:["Kharga|الخارجة","Dakhla|الداخلة","Farafra|الفرافرة","Baris|باريس"]},
-      "Matrouh|مطروح":{pc:"51511",cities:["Marsa Matrouh|مرسى مطروح","El Alamein|العلمين","Sidi Barrani|سيدي براني","Siwa|سيوة","Dabaa|الضبعة"]},
-      "North Sinai|شمال سيناء":{pc:"45511",cities:["Arish|العريش","Sheikh Zuweid|الشيخ زويد","Bir al-Abd|بئر العبد","Rafah|رفح"]},
-      "South Sinai|جنوب سيناء":{pc:"46511",cities:["El Tor|الطور","Sharm El Sheikh|شرم الشيخ","Dahab|دهب","Nuweiba|نويبع","Saint Catherine|سانت كاترين","Abu Rudeis|أبو رديس"]}
+      "Cairo|القاهرة":{pc:"11511",cities:["Nasr City|مدينة نصر|11765","Maadi|المعادي|11431","Heliopolis|مصر الجديدة|11341","Helwan|حلوان|11731","New Cairo|القاهرة الجديدة|11835","Shubra|شبرا|11511","Downtown|وسط البلد|11511","15th May City|مدينة 15 مايو|11731"]},
+      "Giza|الجيزة":{pc:"12511",cities:["Giza|الجيزة|12511","6th of October|السادس من أكتوبر|12566","Sheikh Zayed|الشيخ زايد|12588","Dokki|الدقي|12611","Haram|الهرم|12556","Badrashin|البدرشين|12951","Saff|الصف|12915"]},
+      "Alexandria|الإسكندرية":{pc:"21500",cities:["Alexandria|الإسكندرية|21500","Borg El Arab|برج العرب|21934","Amreya|العامرية|21500","Montaza|المنتزه|21500"]},
+      "Dakahlia|الدقهلية":{pc:"35511",cities:["Mansoura|المنصورة|35511","Talkha|طلخا|35711","Mit Ghamr|ميت غمر|35611","Aga|أجا|35651","Belqas|بلقاس|35681","Dekernes|دكرنس|35771"]},
+      "Sharqia|الشرقية":{pc:"44511",cities:["Zagazig|الزقازيق|44511","10th of Ramadan|العاشر من رمضان|44629","Bilbeis|بلبيس|44621","Abu Hammad|أبو حماد|44671","Faqous|فاقوس|44811","Minya al-Qamh|منيا القمح|44631"]},
+      "Qalyubia|القليوبية":{pc:"13511",cities:["Banha|بنها|13511","Qalyub|قليوب|13611","Shubra El Kheima|شبرا الخيمة|13711","Qanater|القناطر الخيرية|13621","Khanka|الخانكة|13561","Khosous|الخصوص|13721"]},
+      "Kafr El Sheikh|كفر الشيخ":{pc:"33511",cities:["Kafr El Sheikh|كفر الشيخ|33511","Desouk|دسوق|33611","Fuwa|فوه|33651","Baltim|بلطيم|33771","Metoubes|مطوبس|33731"]},
+      "Gharbia|الغربية":{pc:"31511",cities:["Tanta|طنطا|31511","El Mahalla El Kubra|المحلة الكبرى|31611","Kafr El Zayat|كفر الزيات|31711","Zefta|زفتى|31761","Samannoud|سمنود|31641","Basyoun|بسيون|31751"]},
+      "Monufia|المنوفية":{pc:"32511",cities:["Shibin El Kom|شبين الكوم|32511","Menouf|منوف|32611","Sadat City|مدينة السادات|32897","Ashmoun|أشمون|32711","Quesna|قويسنا|32631","Berket El Sabaa|بركة السبع|32651"]},
+      "Beheira|البحيرة":{pc:"22511",cities:["Damanhour|دمنهور|22511","Kafr El Dawwar|كفر الدوار|22611","Rashid|رشيد|22771","Edku|إدكو|22751","Abu Hummus|أبو حمص|22731","Kom Hamada|كوم حمادة|22661"]},
+      "Ismailia|الإسماعيلية":{pc:"41511",cities:["Ismailia|الإسماعيلية|41511","Fayed|فايد|41611","Qantara|القنطرة|41631","Tell El Kebir|التل الكبير|41711"]},
+      "Port Said|بورسعيد":{pc:"42511",cities:["Port Said|بورسعيد|42511","Port Fouad|بورفؤاد|42711"]},
+      "Suez|السويس":{pc:"43511",cities:["Suez|السويس|43511","Ain Sokhna|العين السخنة|43711"]},
+      "Damietta|دمياط":{pc:"34511",cities:["Damietta|دمياط|34511","New Damietta|دمياط الجديدة|34517","Ras El Bar|رأس البر|34711","Faraskur|فارسكور|34611","Kafr Saad|كفر سعد|34651"]},
+      "Fayoum|الفيوم":{pc:"63511",cities:["Fayoum|الفيوم|63511","Sinnuris|سنورس|63611","Tamiya|طامية|63651","Ibsheway|إبشواي|63711","Yousef El Seddik|يوسف الصديق|63751"]},
+      "Beni Suef|بني سويف":{pc:"62511",cities:["Beni Suef|بني سويف|62511","Nasser|ناصر|62611","Wasta|الواسطى|62651","Biba|ببا|62711","Fashn|الفشن|62751","Sumusta|سمسطا|62761"]},
+      "Minya|المنيا":{pc:"61511",cities:["Minya|المنيا|61511","Mallawi|ملوي|61611","Bani Mazar|بني مزار|61711","Maghagha|مغاغة|61731","Samalut|سمالوط|61661","Matay|مطاي|61751","Abu Qurqas|أبو قرقاص|61671"]},
+      "Assiut|أسيوط":{pc:"71511",cities:["Assiut|أسيوط|71511","Dairut|ديروط|71711","Manfalut|منفلوط|71611","Abnub|أبنوب|71651","Abu Tig|أبو تيج|71751","El Badari|البداري|71771"]},
+      "Sohag|سوهاج":{pc:"82511",cities:["Sohag|سوهاج|82511","Akhmim|أخميم|82611","Girga|جرجا|82711","Tahta|طهطا|82651","Tema|طما|82661","Maragha|المراغة|82631","Balyana|البلينا|82761"]},
+      "Qena|قنا":{pc:"83511",cities:["Qena|قنا|83511","Nag Hammadi|نجع حمادي|83611","Qus|قوص|83711","Deshna|دشنا|83651","Naqada|نقادة|83751","Farshut|فرشوط|83661"]},
+      "Luxor|الأقصر":{pc:"85511",cities:["Luxor|الأقصر|85511","Esna|إسنا|85611","Armant|أرمنت|85651","Qurna|القرنة|85711"]},
+      "Aswan|أسوان":{pc:"81511",cities:["Aswan|أسوان|81511","Kom Ombo|كوم أمبو|81611","Edfu|إدفو|81711","Daraw|دراو|81651","Nasr El Nuba|نصر النوبة|81751"]},
+      "Red Sea|البحر الأحمر":{pc:"84511",cities:["Hurghada|الغردقة|84511","Safaga|سفاجا|84611","Quseir|القصير|84711","Marsa Alam|مرسى علم|84751","Ras Gharib|رأس غارب|84661"]},
+      "New Valley|الوادي الجديد":{pc:"72511",cities:["Kharga|الخارجة|72511","Dakhla|الداخلة|72611","Farafra|الفرافرة|72711","Baris|باريس|72651"]},
+      "Matrouh|مطروح":{pc:"51511",cities:["Marsa Matrouh|مرسى مطروح|51511","El Alamein|العلمين|51611","Sidi Barrani|سيدي براني|51711","Siwa|سيوة|51751","Dabaa|الضبعة|51661"]},
+      "North Sinai|شمال سيناء":{pc:"45511",cities:["Arish|العريش|45511","Sheikh Zuweid|الشيخ زويد|45611","Bir al-Abd|بئر العبد|45711","Rafah|رفح|45651"]},
+      "South Sinai|جنوب سيناء":{pc:"46511",cities:["El Tor|الطور|46511","Sharm El Sheikh|شرم الشيخ|46619","Dahab|دهب|46711","Nuweiba|نويبع|46651","Saint Catherine|سانت كاترين|46617","Abu Rudeis|أبو رديس|46561"]}
     }
   },
   "Saudi Arabia":{type:"region",label_en:"Saudi Arabia",label_ar:"السعودية",
     regions:{
       "Riyadh (Central)|الرياض (الوسطى)":{pc:"11564",govs:{
-        "Riyadh|الرياض":["Riyadh|الرياض","Diriyah|الدرعية","Kharj|الخرج","Dawadmi|الدوادمي","Majmaah|المجمعة","Zulfi|الزلفي","Afif|عفيف","Quwaiyah|القويعية"]}},
-      "Makkah (Western)|مكة المكرمة (الغربية)":{pc:"21955",govs:{
-        "Makkah|مكة":["Makkah|مكة","Jeddah|جدة","Taif|الطائف","Rabigh|رابغ","Qunfudhah|القنفذة","Jumum|الجموم","Khulais|خليص"]}},
+        "Riyadh|الرياض":["Riyadh|الرياض|11564","Diriyah|الدرعية|13712","Kharj|الخرج|11942","Dawadmi|الدوادمي|11911","Majmaah|المجمعة|11952","Zulfi|الزلفي|11932","Afif|عفيف|11921","Quwaiyah|القويعية|11971"]}},
+      "Makkah (Western)|مكة المكرمة (الغربية)":{pc:"24231",govs:{
+        "Makkah|مكة":["Makkah|مكة|24231","Jeddah|جدة|23218","Taif|الطائف|26514","Rabigh|رابغ|25732","Qunfudhah|القنفذة|28821","Jumum|الجموم|25371","Khulais|خليص|25861"]}},
       "Madinah (Western)|المدينة المنورة (الغربية)":{pc:"42311",govs:{
-        "Madinah|المدينة":["Madinah|المدينة","Yanbu|ينبع","Badr|بدر","Ula|العلا","Mahd adh Dhahab|مهد الذهب","Khaybar|خيبر"]}},
+        "Madinah|المدينة":["Madinah|المدينة|42311","Yanbu|ينبع|46477","Badr|بدر|41931","Ula|العلا|43311","Mahd adh Dhahab|مهد الذهب|41912","Khaybar|خيبر|41961"]}},
       "Eastern Province|المنطقة الشرقية":{pc:"31952",govs:{
-        "Eastern|الشرقية":["Dammam|الدمام","Khobar|الخبر","Dhahran|الظهران","Jubail|الجبيل","Hofuf (Al-Ahsa)|الهفوف (الأحساء)","Qatif|القطيف","Hafr Al-Batin|حفر الباطن","Khafji|الخفجي"]}},
+        "Eastern|الشرقية":["Dammam|الدمام|34223","Khobar|الخبر|34714","Dhahran|الظهران|34455","Jubail|الجبيل|35514","Hofuf (Al-Ahsa)|الهفوف (الأحساء)|36361","Qatif|القطيف|32654","Hafr Al-Batin|حفر الباطن|39911","Khafji|الخفجي|39957"]}},
       "Asir (Southern)|عسير (الجنوبية)":{pc:"61411",govs:{
-        "Asir|عسير":["Abha|أبها","Khamis Mushait|خميس مشيط","Bisha|بيشة","Namas|النماص","Muhayil|محايل عسير","Sarat Abidah|سراة عبيدة"]}},
+        "Asir|عسير":["Abha|أبها|62521","Khamis Mushait|خميس مشيط|62451","Bisha|بيشة|67711","Namas|النماص|61971","Muhayil|محايل عسير|63611","Sarat Abidah|سراة عبيدة|62991"]}},
       "Jazan (Southern)|جازان (الجنوبية)":{pc:"82611",govs:{
-        "Jazan|جازان":["Jazan|جازان","Sabya|صبيا","Abu Arish|أبو عريش","Samtah|صامطة","Ahad al-Masarihah|أحد المسارحة","Farasan|فرسان"]}},
+        "Jazan|جازان":["Jazan|جازان|82611","Sabya|صبيا|85511","Abu Arish|أبو عريش|82722","Samtah|صامطة|86735","Ahad al-Masarihah|أحد المسارحة|83341","Farasan|فرسان|83671"]}},
       "Najran (Southern)|نجران (الجنوبية)":{pc:"66251",govs:{
-        "Najran|نجران":["Najran|نجران","Sharurah|شرورة","Hubuna|حبونا","Badr al-Janub|بدر الجنوب"]}},
+        "Najran|نجران":["Najran|نجران|66251","Sharurah|شرورة|68361","Hubuna|حبونا|66321","Badr al-Janub|بدر الجنوب|66711"]}},
       "Al-Bahah (Southern)|الباحة (الجنوبية)":{pc:"65511",govs:{
-        "Al-Bahah|الباحة":["Al-Bahah|الباحة","Baljurashi|بلجرشي","Mandaq|المندق","Qilwah|قلوة","Mikhwah|المخواة"]}},
+        "Al-Bahah|الباحة":["Al-Bahah|الباحة|65511","Baljurashi|بلجرشي|65637","Mandaq|المندق|65721","Qilwah|قلوة|65931","Mikhwah|المخواة|65821"]}},
       "Tabuk (Northern)|تبوك (الشمالية)":{pc:"47311",govs:{
-        "Tabuk|تبوك":["Tabuk|تبوك","Duba|ضباء","Tayma|تيماء","Umluj|أملج","Haql|حقل","Wajh|الوجه"]}},
+        "Tabuk|تبوك":["Tabuk|تبوك|47311","Duba|ضباء|48811","Tayma|تيماء|47911","Umluj|أملج|48311","Haql|حقل|48941","Wajh|الوجه|48721"]}},
       "Hail (Northern)|حائل (الشمالية)":{pc:"55421",govs:{
-        "Hail|حائل":["Hail|حائل","Baqaa|بقعاء","Ghazalah|الغزالة","Shinan|الشنان","Samira|سميراء"]}},
+        "Hail|حائل":["Hail|حائل|55421","Baqaa|بقعاء|55931","Ghazalah|الغزالة|56921","Shinan|الشنان|56611","Samira|سميراء|56811"]}},
       "Northern Borders|الحدود الشمالية":{pc:"73311",govs:{
-        "Northern Borders|الحدود الشمالية":["Arar|عرعر","Rafha|رفحاء","Turaif|طريف","Uwayqilah|العويقيلة"]}},
+        "Northern Borders|الحدود الشمالية":["Arar|عرعر|73311","Rafha|رفحاء|76311","Turaif|طريف|75311","Uwayqilah|العويقيلة|76911"]}},
       "Al-Jawf (Northern)|الجوف (الشمالية)":{pc:"72341",govs:{
-        "Al-Jawf|الجوف":["Sakaka|سكاكا","Qurayyat|القريات","Dumat al-Jandal|دومة الجندل","Tabarjal|طبرجل"]}},
+        "Al-Jawf|الجوف":["Sakaka|سكاكا|72341","Qurayyat|القريات|75911","Dumat al-Jandal|دومة الجندل|72821","Tabarjal|طبرجل|75721"]}},
       "Qassim (Central)|القصيم (الوسطى)":{pc:"51431",govs:{
-        "Qassim|القصيم":["Buraydah|بريدة","Unayzah|عنيزة","Rass|الرس","Mithnab|المذنب","Bukayriyah|البكيرية","Badai|البدائع"]}}
+        "Qassim|القصيم":["Buraydah|بريدة|52367","Unayzah|عنيزة|56447","Rass|الرس|58883","Mithnab|المذنب|51931","Bukayriyah|البكيرية|51941","Badai|البدائع|51951"]}}
     }
   }
 };
@@ -705,19 +694,67 @@ const LABS={
     fields:[{k:"flockType",l:"Flock Type",t:"select",o:["Broiler","Broiler Breeder","Layer","Layer Breeder","Other"]},
       {k:"age",l:"Age",t:"text",ph:"e.g. BF7A: 31 D"},{k:"natureSample",l:"Nature of Sample",t:"select",o:["Serum","Swab","Tissue","FTA Card","Other"]},
       {k:"reqParams",l:"Required Parameters",t:"text",ph:"e.g. ND, IBD, H9 Elisa"},{k:"remarks",l:"Remarks",t:"text"}],
-    tests:[{id:"nd_elisa",n:"ND ELISA",m:"Serology",d:"ND"},{id:"ibd_elisa",n:"IBD ELISA",m:"Serology",d:"IBD"},
-      {id:"h9_elisa",n:"H9 ELISA",m:"Serology",d:"H9"},{id:"ib_elisa",n:"IB ELISA",m:"Serology",d:"IB"},
-      {id:"ai_elisa",n:"AI ELISA",m:"Serology",d:"AI"},{id:"reo_elisa",n:"REO ELISA",m:"Serology",d:"Reovirus"},
-      {id:"cav_elisa",n:"CAV ELISA",m:"Serology",d:"CAV"},{id:"nd_hi",n:"ND HI",m:"Serology",d:"ND"},
-      {id:"h9_hi",n:"H9 HI",m:"Serology",d:"H9"},{id:"h5_hi",n:"H5 HI",m:"Serology",d:"AI"},{id:"ib_hi",n:"IB HI",m:"Serology",d:"IB"},
-      {id:"ib_pcr_vb",n:"IB PCR",m:"PCR",d:"IB"},{id:"nd_pcr_vb",n:"ND PCR",m:"PCR",d:"ND"},
-      {id:"ai_pcr_vb",n:"AI PCR",m:"PCR",d:"AI"},{id:"h9_pcr_vb",n:"H9 PCR",m:"PCR",d:"H9"}]},
+    tests:[
+      {id:"aevs_vb",n:"AEVS - AEV Indirect ELISA",m:"Serology",d:"Other"},
+      {id:"mpv_vb",n:"MPV - Avian Metapneumovirus ELISA",m:"Serology",d:"ART"},
+      {id:"cav_elisa_vb",n:"CAV - Chicken Anemia Virus ELISA",m:"Serology",d:"CAV"},
+      {id:"ibvarsv2_vb",n:"IBVARSV2 - Infectious Bronchitis ELISA",m:"Serology",d:"IB"},
+      {id:"ibds_vb",n:"IBDS - IBD Indirect ELISA",m:"Serology",d:"IBD"},
+      {id:"ibdvp2_vb",n:"IBDVP2 - IBD VP2 ELISA",m:"Serology",d:"IBD"},
+      {id:"ilts_vb",n:"ILTS - ILT Indirect ELISA",m:"Serology",d:"ILT"},
+      {id:"flunps_vb",n:"FLUNPS - Influenza A Nucleoprotein ELISA",m:"Serology",d:"AI"},
+      {id:"fluh9s_vb",n:"FLUH9S - Influenza H9 ELISA",m:"Serology",d:"H9"},
+      {id:"mg_elisa_vb",n:"MG - Mycoplasma gallisepticum ELISA",m:"Serology",d:"MG"},
+      {id:"ms_elisa_vb",n:"MS - Mycoplasma synoviae ELISA",m:"Serology",d:"MS"},
+      {id:"mgms_vb",n:"MGMS - MG/MS Indirect ELISA",m:"Serology",d:"MG"},
+      {id:"ndvs_vb",n:"NDVS - NDV ELISA (HVT-NDV vector)",m:"Serology",d:"ND"},
+      {id:"ndvscv_vb",n:"NDVS-CV - NDV ELISA (conventional)",m:"Serology",d:"ND"},
+      {id:"ndvnp_vb",n:"NDVNP - Newcastle Nucleoprotein ELISA",m:"Serology",d:"ND"},
+      {id:"ort_vb",n:"ORT - ORT Indirect ELISA",m:"Serology",d:"Other"},
+      {id:"pmschick_vb",n:"PMS-CHICK - Pasteurella multocida ELISA",m:"Serology",d:"Other"},
+      {id:"reos_vb",n:"REOS - Avian Reovirus ELISA",m:"Serology",d:"Reovirus"},
+      {id:"sals_vb",n:"SALS - Avian Salmonella ELISA (B and D)",m:"Serology",d:"Other"},
+      {id:"salsgpd_vb",n:"SALSGPD - Salmonella Group D ELISA",m:"Serology",d:"Other"},
+      {id:"eds_vb",n:"EDS - EDS Indirect ELISA",m:"Serology",d:"Other"},
+      {id:"ndvhi_vb",n:"NDV-HI - NDV HI Test (16/house)",m:"Serology",d:"ND"},
+      {id:"ibvhi_vb",n:"IBV-HI - IBV HI Test D274/D8880/D388(OX)/Italy2",m:"Serology",d:"IB"},
+      {id:"adenopcr_vb",n:"ADENOPCR - Fowl Adeno Real Time PCR",m:"PCR",d:"FAdV"},
+      {id:"idilt_vb",n:"IDILT - ILT Real Time PCR",m:"PCR",d:"ILT"},
+      {id:"idibv_vb",n:"IDIBV - Infectious Bronchitis Real Time PCR",m:"PCR",d:"IB"},
+      {id:"idflua_vb",n:"IDFLUA - Influenza A Real Time PCR",m:"PCR",d:"AI"},
+      {id:"idmgms_vb",n:"IDMGMS - MG/MS Real Time PCR",m:"PCR",d:"MG"},
+      {id:"idndv_vb",n:"IDNDV - Newcastle Real Time PCR",m:"PCR",d:"ND"},
+      {id:"idaev_vb",n:"IDAEV - Avian Encephalomyelitis Duplex",m:"PCR",d:"Other"},
+      {id:"idcampav_vb",n:"IDCAMPAV - Avian Campylobacter quadruplex",m:"PCR",d:"Other"},
+      {id:"idcav_vb",n:"IDCAV - Chicken Anemia Duplex",m:"PCR",d:"CAV"},
+      {id:"idedsv_vb",n:"IDEDSV - Egg Drop Syndrome Duplex",m:"PCR",d:"Other"},
+      {id:"idibdv1_vb",n:"IDIBDV1 - IBDV serotype 1 Duplex",m:"PCR",d:"IBD"},
+      {id:"idmdv_vb",n:"IDMDV - Marek's Disease Duplex",m:"PCR",d:"Marek"},
+      {id:"idmpvab_vb",n:"IDMPVAB - Avian Metapneumovirus A and B Triplex",m:"PCR",d:"ART"},
+      {id:"idmpvc_vb",n:"IDMPVC - Avian Metapneumovirus C Duplex",m:"PCR",d:"ART"},
+      {id:"idmpvd_vb",n:"IDMPVD - Avian Metapneumovirus D Duplex",m:"PCR",d:"ART"},
+      {id:"idreov_vb",n:"IDREOV - Avian Reovirus Duplex",m:"PCR",d:"Reovirus"},
+      {id:"idsal_vb",n:"IDSAL - Salmonella spp. Duplex",m:"PCR",d:"Other"},
+      {id:"bactsalm_vb",n:"BACT-SALM - Salmonella Isolation & ID",m:"PCR",d:"Other"},
+      {id:"bactecoli_vb",n:"BACT-ECOLI - E. coli Isolation & ID",m:"PCR",d:"Other"},
+      {id:"bactpseudo_vb",n:"BACT-PSEUDO - Pseudomonas Isolation & ID",m:"PCR",d:"Other"},
+      {id:"bactcamp_vb",n:"BACT-CAMP - Campylobacter Isolation & ID",m:"PCR",d:"Other"},
+      {id:"bactanaerobe_vb",n:"BACT-ANAEROBE - Anaerobes (Clostridium)",m:"PCR",d:"Other"},
+      {id:"bactgpositive_vb",n:"BACT-GPOSITIVE - Gram positive bacteria",m:"PCR",d:"Other"},
+      {id:"bactsens_vb",n:"BACT-SENSITIVITY - Antibiotic sensitivity",m:"PCR",d:"Other"}
+    ]},
   gd:{name:"Royal GD",full:"Royal GD - Animal Health (Netherlands)",abbr:"GD",
-    fields:[{k:"vet",l:"Farmer / Veterinarian",t:"text"},{k:"customerNo",l:"Customer No.",t:"text",ph:"e.g. 5415599"},
+    fields:[{k:"vet",l:"Farmer / Veterinarian",t:"text"},{k:"streetAddress",l:"Street address",t:"text"},
+      {k:"postalCity",l:"Postal code + City",t:"text"},{k:"customerNo",l:"Customer No.",t:"text",ph:"e.g. 5415599"},
+      {k:"other",l:"Other (name/address)",t:"text"},{k:"reference",l:"Reference on result and invoice",t:"text"},
+      {k:"submitterIs",l:"Submitter is",t:"select",o:["Farmer","Veterinarian","Other"]},
+      {k:"sendResultTo",l:"Send result to",t:"select",o:["Farmer","Veterinarian","Other"]},
+      {k:"sendInvoiceTo",l:"Send invoice to",t:"select",o:["Farmer","Veterinarian","Other"]},
       {k:"birdType",l:"Type",t:"select",o:["Chicken","Turkey","Duck","Other"]},
       {k:"prodTarget",l:"Production target",t:"select",o:["Layer barn","Layer free range","Organic layer","Meat","Meat slower-growing","End"]},
       {k:"prodType",l:"Production type",t:"select",o:["Replacement grandparent","Grandparent","Replacement breeders","Breeders","Layer pullets","Production"]},
-      {k:"numCards",l:"Number of FTA cards",t:"number",ph:"e.g. 1"},{k:"cardIds",l:"Card IDs / identification",t:"text",ph:"e.g. A: Cloacal Swab pooled"}],
+      {k:"testMode",l:"Spots tested",t:"select",o:["Spots tested individually","Tested as 1 pool per card"]},
+      {k:"numCards",l:"Number of FTA cards",t:"number",ph:"e.g. 6"},{k:"cardIds",l:"Card IDs / identification (A-F, spots 1-4)",t:"textarea",ph:"e.g. A1: Cloacal Swab pooled ..."}],
     tests:[{id:"ib_pcr_gd",n:"IB PCR (Mass + 793B)",m:"PCR",d:"IB"},{id:"ib_geno_gd",n:"IB genotyping",m:"PCR",d:"IB"},
       {id:"ndv_gd",n:"NDV PCR",m:"PCR",d:"ND"},{id:"aiv_gd",n:"Avian Influenza PCR",m:"PCR",d:"AI"},
       {id:"flu_type_gd",n:"Influenza H5/H6/H7/H9 typing",m:"PCR",d:"AI"},{id:"ibd_gd",n:"Gumboro / IBD PCR",m:"PCR",d:"IBD"},
@@ -730,22 +767,76 @@ const LABS={
       {id:"vircheck_gd",n:"VIR-check",m:"PCR",d:"Other"}]},
   anicon:{name:"ANICON / SAN",full:"ANICON / SAN Group Biotech (Germany)",abbr:"AN",
     fields:[{k:"vet",l:"Veterinarian",t:"text"},{k:"clinic",l:"Clinic / Company",t:"text"},
+      {k:"vetAddress",l:"Vet-Clinic Address / Country",t:"text"},{k:"vetPhone",l:"Vet-Clinic Phone / Fax",t:"text"},
+      {k:"vetEmail",l:"Vet-Clinic E-Mail",t:"text"},{k:"producerName",l:"Producer Name",t:"text"},
+      {k:"producerAddress",l:"Producer Address / Country",t:"text"},{k:"vatNo",l:"Tax reference (VAT) for EU shipments",t:"text"},
       {k:"poultryType",l:"Poultry-Type",t:"select",o:["Commercial layer","Broiler (chicken)","Turkey","Duck","Goose","Parent stock"]},
-      {k:"labNo",l:"Lab-No. of sample (sender)",t:"text"},{k:"pooling",l:"Pooling",t:"select",o:["Not pooled - individual results","Pool in the lab"]},
+      {k:"labNo",l:"Lab-No. of sample (sender)",t:"text"},{k:"sendReportTo",l:"Send report to",t:"select",o:["Veterinarian","Producer"]},
+      {k:"sendInvoiceTo",l:"Send invoice to",t:"select",o:["Veterinarian","Producer"]},
+      {k:"pooling",l:"Pooling",t:"select",o:["Not pooled - individual results","Pool in the lab"]},
       {k:"caseHistory",l:"Case History",t:"textarea"},{k:"comments",l:"Comments",t:"text",ph:"e.g. All Bursa for IBDV, Trachea for IBV/NDV/H9"}],
-    tests:[{id:"ibv_scr_an",n:"IBV screening",m:"PCR",d:"IB"},{id:"ibv_11_an",n:"IBV 11 variants",m:"PCR",d:"IB"},
-      {id:"ibv_seq_an",n:"IBV sequencing",m:"PCR",d:"IB"},{id:"ibdv_scr_an",n:"IBDV screening",m:"PCR",d:"IBD"},
-      {id:"ibdv_type_an",n:"IBDV typing",m:"PCR",d:"IBD"},{id:"ibdv_seq_an",n:"IBDV sequencing",m:"PCR",d:"IBD"},
-      {id:"ndv_an",n:"NDV (aPMV-1)",m:"PCR",d:"ND"},{id:"ndv_path_an",n:"NDV pathotyping",m:"PCR",d:"ND"},
-      {id:"ndv_seq_an",n:"NDV sequencing",m:"PCR",d:"ND"},{id:"aiv_an",n:"Influenza A screening",m:"PCR",d:"AI"},
-      {id:"flu_h_an",n:"Influenza H5+H7+H9",m:"PCR",d:"AI"},{id:"ampv_an",n:"aMPV A&B (ART/TRT)",m:"PCR",d:"ART"},
-      {id:"reo_an",n:"Reovirus",m:"PCR",d:"Reovirus"},{id:"reo_seq_an",n:"Reovirus sequencing",m:"PCR",d:"Reovirus"},
-      {id:"fadv_an",n:"Fowl Adenovirus (FAdV)",m:"PCR",d:"FAdV"},{id:"fadv_type_an",n:"FAdV typing",m:"PCR",d:"FAdV"},
-      {id:"iltv_an",n:"ILTV",m:"PCR",d:"ILT"},{id:"marek_an",n:"Marek screening",m:"PCR",d:"Marek"},
-      {id:"mdv_diva_an",n:"MDV & Rispens DIVA",m:"PCR",d:"Marek"},{id:"cav_an",n:"Chicken Anemia Virus",m:"PCR",d:"CAV"},
-      {id:"myco_scr_an",n:"Mycoplasma screening",m:"PCR",d:"MG"},{id:"mg_an",n:"MG screening",m:"PCR",d:"MG"},
-      {id:"ms_an",n:"MS screening",m:"PCR",d:"MS"},{id:"coryza_an",n:"Coryza",m:"PCR",d:"Coryza"},
-      {id:"castv_an",n:"Chicken Astrovirus",m:"PCR",d:"Other"}]},
+    tests:[
+      {id:"aev_an",n:"Avian Encephalomyelitis Virus",m:"PCR",d:"Other"},
+      {id:"ahev_an",n:"Avian Hepevirus",m:"PCR",d:"Other"},
+      {id:"ampvab_an",n:"Avian Metapneumovirus A & B (ART/TRT/SHS)",m:"PCR",d:"ART"},
+      {id:"ampvc_an",n:"Avian Metapneumovirus C",m:"PCR",d:"ART"},
+      {id:"ampvd_an",n:"Avian Metapneumovirus D",m:"PCR",d:"ART"},
+      {id:"anv_an",n:"Avian Nephritis Virus 1 & 2 (ANV-1 & -2)",m:"PCR",d:"Other"},
+      {id:"anv3_an",n:"Nephritis Virus 3 (ANV-3)",m:"PCR",d:"Other"},
+      {id:"arv_an",n:"Avian Rotavirus A & D",m:"PCR",d:"Other"},
+      {id:"coryza_an",n:"Avibacterium paragallinarum (Coryza)",m:"PCR",d:"Coryza"},
+      {id:"borde_an",n:"Bordetella avium",m:"PCR",d:"Other"},
+      {id:"brachy_an",n:"Brachyspira spp.",m:"PCR",d:"Other"},
+      {id:"campy_an",n:"Campylobacter spp.",m:"PCR",d:"Other"},
+      {id:"castv_an",n:"Chicken Astrovirus (CAstV)",m:"PCR",d:"Other"},
+      {id:"chlamscr_an",n:"Chlamydiaceae Screening",m:"PCR",d:"Chlamydia"},
+      {id:"chlampsit_an",n:"Chlamydia psittaci",m:"PCR",d:"Chlamydia"},
+      {id:"eds_an",n:"Egg Drop Syndrome-76-Virus (EDS-76/DuAdV)",m:"PCR",d:"Other"},
+      {id:"erysi_an",n:"Erysipelothrix rhusiopathiae",m:"PCR",d:"Other"},
+      {id:"fadv_an",n:"Fowl Adenovirus (FAdV)",m:"PCR",d:"FAdV"},
+      {id:"fadv_type_an",n:"FADV Typing (Sequencing)",m:"PCR",d:"FAdV"},
+      {id:"hvt_an",n:"Herpes Virus of Turkey (HVT, MeHV-1)",m:"PCR",d:"Marek"},
+      {id:"histo_an",n:"Histomonas meleagridis",m:"PCR",d:"Histomonas"},
+      {id:"ibv_scr_an",n:"Infectious Bronchitis (IBV; ACoV) Screening incl. IBV & Turkey Coronavirus",m:"PCR",d:"IB"},
+      {id:"ibv_11_an",n:"Infectious Bronchitis Virus - 11 variants",m:"PCR",d:"IB"},
+      {id:"ibv_seq_an",n:"Infectious Bronchitis Virus sequencing",m:"PCR",d:"IB"},
+      {id:"ibdv_scr_an",n:"Infectious Bursitis Virus (IBDV/Gumboro) Screening",m:"PCR",d:"IBD"},
+      {id:"ibdv_seq_an",n:"IBDV Sequencing",m:"PCR",d:"IBD"},
+      {id:"iltv_an",n:"Infectious Laryngotracheitis Virus (ILTV)",m:"PCR",d:"ILT"},
+      {id:"fluascr_an",n:"Influenza A Screening",m:"PCR",d:"AI"},
+      {id:"fluh5h7h9_an",n:"Influenza H5+H7+H9",m:"PCR",d:"AI"},
+      {id:"flutype_an",n:"Influenza H-Type (excl. H5, H7)",m:"PCR",d:"AI"},
+      {id:"innovax_an",n:"Innovax ND + IBD-DIVA",m:"PCR",d:"ND"},
+      {id:"vectormune_an",n:"Vectormune ND DIVA",m:"PCR",d:"ND"},
+      {id:"cav_an",n:"Chicken Anemia Virus",m:"PCR",d:"CAV"},
+      {id:"mdv_scr_an",n:"Marek's Disease Screening (MDV-1, GaHV-2)",m:"PCR",d:"Marek"},
+      {id:"mdv_diva_an",n:"MDV & Rispens Diva (MDV-1 and CVI988 differentiation)",m:"PCR",d:"Marek"},
+      {id:"myco_scr_an",n:"Mycoplasma spp. screening",m:"PCR",d:"MG"},
+      {id:"mg_scr_an",n:"Mycoplasma gallisepticum Screening",m:"PCR",d:"MG"},
+      {id:"mg685_an",n:"Mycoplasma gallisepticum 6/85 DIVA",m:"PCR",d:"MG"},
+      {id:"mgts11_an",n:"Mycoplasma gallisepticum ts-11 DIVA",m:"PCR",d:"MG"},
+      {id:"miowa_an",n:"Mycoplasma iowae",m:"PCR",d:"Other"},
+      {id:"mmelea_an",n:"Mycoplasma meleagridis",m:"PCR",d:"Other"},
+      {id:"ms_scr_an",n:"Mycoplasma synoviae screening",m:"PCR",d:"MS"},
+      {id:"msh_diva_an",n:"Mycoplasma synoviae MS-H-DIVA",m:"PCR",d:"MS"},
+      {id:"ms1_diva_an",n:"Mycoplasma synoviae MS-1 DIVA",m:"PCR",d:"MS"},
+      {id:"ndv_an",n:"Newcastle Disease Virus (NDV; aPMV-1)",m:"PCR",d:"ND"},
+      {id:"ndv_path_an",n:"Newcastle Disease Virus Pathotyping",m:"PCR",d:"ND"},
+      {id:"ndv_seq_an",n:"Newcastle Disease Virus Sequencing",m:"PCR",d:"ND"},
+      {id:"ort_an",n:"Ornithobacterium rhinotracheale (ORT)",m:"PCR",d:"Other"},
+      {id:"pm_an",n:"Pasteurella multocida",m:"PCR",d:"Other"},
+      {id:"pm_septica_an",n:"Pasteurella multocida subsp. septica",m:"PCR",d:"Other"},
+      {id:"pm_capsule_an",n:"Pasteurella multocida capsule Typing",m:"PCR",d:"Other"},
+      {id:"reo_an",n:"Reovirus",m:"PCR",d:"Reovirus"},
+      {id:"reo_seq_an",n:"Reovirus Sequencing",m:"PCR",d:"Reovirus"},
+      {id:"rev_an",n:"Reticuloendotheliosis Virus (REV)",m:"PCR",d:"Other"},
+      {id:"riemerella_an",n:"Riemerella anatipestifer",m:"PCR",d:"Other"},
+      {id:"tastv_an",n:"Turkey Astrovirus 1 & 2 (TAstV-1 & -2)",m:"PCR",d:"Other"},
+      {id:"themorrhagic_an",n:"Turkey Hemorrhagic Enteritis Virus",m:"PCR",d:"Other"},
+      {id:"tvh_an",n:"Turkey Viral Hepatitis Virus (Picornavirus; TVH)",m:"PCR",d:"Other"},
+      {id:"vaxxitek_an",n:"Vaxxitek HVT + IBD",m:"PCR",d:"IBD"},
+      {id:"poulvac_an",n:"Poulvac Procerta HVT-ND",m:"PCR",d:"ND"}
+    ]},
   xovo:{name:"x-OvO Flockscreen",full:"x-OvO Flockscreen e-Portal",abbr:"XO",
     fields:[{k:"country",l:"MSD Animal Health Country",t:"text",ph:"e.g. Saudi Arabia"},{k:"vetPractice",l:"Submitting Veterinary Practice",t:"text"},
       {k:"vetSurgeon",l:"Veterinary Surgeon",t:"text"},{k:"email",l:"Email",t:"text"},{k:"postalCode",l:"Postal Code",t:"text"},
@@ -1103,6 +1194,7 @@ function initNewForm(){
 /* ---- Geography cascade: country -> region(KSA) -> governorate -> city -> postal ---- */
 function geoName(pair){return (pair||"").split("|")[0];}
 function geoAr(pair){const p=(pair||"").split("|");return p[1]||p[0];}
+function geoPc(pair){const p=(pair||"").split("|");return p[2]||"";}
 function geoLabel(pair){const ar=Lang.current&&Lang.current()==="ar";return ar?geoAr(pair):geoName(pair);}
 function initGeo(){
   const c=el("f_country");if(!c)return;
@@ -1152,7 +1244,10 @@ function onGovChange(){
   }
 }
 function onCityChange(){
-  // keep postal from region/gov; also mirror the human-readable region into free-text field for reports
+  // Prefer the city-level postal code; keep the gov/region code as fallback.
+  const cityPair=el("f_city").value;
+  const cityPc=geoPc(cityPair);
+  if(cityPc)el("f_postal").value=cityPc;
   const country=el("f_country").value;
   const parts=[];
   if(country==="Saudi Arabia"){if(el("f_ksaregion").value)parts.push(geoName(el("f_ksaregion").value));if(el("f_gov").value)parts.push(geoName(el("f_gov").value));}
@@ -1203,9 +1298,28 @@ function addHouse(){
   tr.querySelector(".removebtn").onclick=()=>tr.remove();tb.appendChild(tr);
 }
 function renderTests(lab){
-  el("testGrid").innerHTML=labTests(lab).map(t=>
-    `<label class="chk"><input type="checkbox" class="t-chk" value="${t.id}" data-m="${t.m}"><span>${esc(t.n)}</span><span class="m ${t.m}">${t.m}</span></label>`).join("");
+  const tests=labTests(lab);
+  const ar=Lang.current&&Lang.current()==="ar";
+  const groups={};tests.forEach(t=>{(groups[t.m]=groups[t.m]||[]).push(t);});
+  let h=`<div style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <input type="search" id="testFilter" placeholder="${ar?"ابحث في الاختبارات...":"Filter tests..."}" style="flex:1;min-width:180px">
+    <button type="button" class="addbtn" id="testSelAll">${ar?"تحديد الكل":"Select all"}</button>
+    <button type="button" class="addbtn" id="testClr">${ar?"مسح":"Clear"}</button>
+    <span class="hint" id="testCount"></span></div>`;
+  Object.keys(groups).forEach(m=>{
+    h+=`<div class="test-group" data-m="${m}"><div class="tg-head">${m} <span class="hint">(${groups[m].length})</span></div><div class="testGrid">`
+      +groups[m].map(t=>`<label class="chk"><input type="checkbox" class="t-chk" value="${t.id}" data-m="${t.m}"><span>${esc(t.n)}</span></label>`).join("")
+      +`</div></div>`;
+  });
+  el("testGrid").innerHTML=h;
   el("testHost").style.display="block";
+  const upd=()=>{const n=$$(".t-chk:checked").length;el("testCount").textContent=n?(ar?n+" مختار":n+" selected"):"";};
+  $$(".t-chk").forEach(c=>c.onchange=upd);
+  el("testSelAll").onclick=()=>{$$(".t-chk").forEach(c=>{if(c.closest("label").style.display!=="none")c.checked=true;});upd();};
+  el("testClr").onclick=()=>{$$(".t-chk").forEach(c=>c.checked=false);upd();};
+  el("testFilter").oninput=e=>{const q=e.target.value.toLowerCase();
+    $$("#testGrid label.chk").forEach(l=>{l.style.display=l.textContent.toLowerCase().includes(q)?"":"none";});
+    $$(".test-group").forEach(g=>{const any=$$("label.chk",g).some(l=>l.style.display!=="none");g.style.display=any?"":"none";});};
 }
 function val(id){return (el(id).value||"").trim();}
 function saveSubmission(){
