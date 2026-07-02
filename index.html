@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Poultry Lab Submission and Results System - manage sample submissions, PCR and serology results, GMT/CV analysis and reports across partner laboratories.">
 <meta name="color-scheme" content="light dark">
-<title>Poultry Lab System v2.6</title>
+<title>Poultry Lab System v2.7</title>
 <style>
 /* ============================================================
    THEME TOKENS  (light default + dark override)
@@ -342,7 +342,7 @@ html[dir="rtl"] .interp-tbl th,html[dir="rtl"] .interp-tbl td{text-align:right}
     <div class="sb-foot">
       <button class="theme-toggle" id="langBtn" aria-label="Toggle language" style="margin-bottom:8px"><span>&#127760;</span><span id="langLbl">العربية</span></button>
       <button class="theme-toggle" id="themeBtn" aria-label="Toggle theme"><span id="themeIco"></span><span id="themeLbl">Dark mode</span></button>
-      <div class="ver">Version 2.6</div>
+      <div class="ver">Version 2.7</div>
     </div>
   </aside>
   <div class="scrim" id="scrim"></div>
@@ -384,8 +384,8 @@ html[dir="rtl"] .interp-tbl th,html[dir="rtl"] .interp-tbl td{text-align:right}
           <div class="card"><h3 data-i18n="dash.activity">Recent activity</h3><div id="dashActivity"></div></div>
         </div>
         <div class="card"><h3 data-i18n="dash.alerts">Smart alerts</h3><div id="dashAlerts"></div></div>
-        <div class="card"><h3 data-i18n="dtv.title">IBD vaccination day calculator</h3>
-          <p class="hint" data-i18n="dtv.hint" style="margin-bottom:10px">Estimate the optimal Gumboro (IBD) vaccination day from day-old maternal antibody titre, using BioChek half-life values and the Deventer method.</p>
+        <div class="card"><h3 data-i18n="dtv.title">IBD vaccination day - quick estimate</h3>
+          <p class="hint" data-i18n="dtv.hint" style="margin-bottom:10px">Quick single-value estimate from a mean titre. For the accurate Deventer (Mon3m) calculation using individual titres, enter an IBD serology result in My Submissions and use the calculator inside the result panel.</p>
           <div class="row3">
             <div class="fld"><label data-i18n="dtv.titre">Day-old mean titre</label><input id="dtvTitre" type="number" min="0" placeholder="e.g. 4057"></div>
             <div class="fld"><label data-i18n="dtv.cv">CV %</label><input id="dtvCv" type="number" min="0" placeholder="e.g. 48"></div>
@@ -537,7 +537,7 @@ html[dir="rtl"] .interp-tbl th,html[dir="rtl"] .interp-tbl td{text-align:right}
       </section>
 
       <div class="foot">
-        Poultry Lab System v2.6 &middot; Local working copy - all data is saved in this browser only. Attachments are stored as links.<br>
+        Poultry Lab System v2.7 &middot; Local working copy - all data is saved in this browser only. Attachments are stored as links.<br>
         Labs: Vetbio Global (KSA) &middot; Royal GD (NL) &middot; ANICON/SAN Group (DE) &middot; x-OvO Flockscreen.
       </div>
     </div>
@@ -552,7 +552,7 @@ html[dir="rtl"] .interp-tbl th,html[dir="rtl"] .interp-tbl td{text-align:right}
 <script>
 "use strict";
 /* ============================================================================
-   POULTRY LAB SYSTEM  v2.6
+   POULTRY LAB SYSTEM  v2.7
    Single-file offline app. Organised into small modules:
      Store  - persistence (submissions, config, audit) + autosave signal
      Toast  - notifications          Dialog - promise-based confirm
@@ -763,8 +763,8 @@ const Lang=(()=>{
       "dash.qrep":"التقارير","dash.qrepd":"حسب المعمل/المزرعة/المرض","dash.qset":"الإعدادات","dash.qsetd":"القوائم والنسخ الاحتياطي",
       "dash.byLab":"العينات حسب المعمل","dash.statusDist":"توزيع الحالات","dash.byMonth":"العينات حسب الشهر",
       "dash.pcrPos":"إيجابية الـ PCR","dash.recent":"أحدث العينات","dash.activity":"النشاط الأخير","dash.alerts":"تنبيهات ذكية",
-      "dtv.title":"حاسبة يوم تطعيم الجمبورو (IBD)",
-      "dtv.hint":"احسب اليوم الأمثل لتطعيم الجمبورو من متوسط titre الأجسام المضادة الأمومية عمر يوم، باستخدام قيم نصف العمر من BioChek وطريقة Deventer.",
+      "dtv.title":"يوم تطعيم الجمبورو - تقدير سريع",
+      "dtv.hint":"تقدير سريع بقيمة متوسط واحدة. للحساب الدقيق بطريقة Deventer (Mon3m) باستخدام التيترات الفردية، أدخل نتيجة سيرولوجي IBD في عيناتي واستخدم الحاسبة داخل لوحة النتيجة.",
       "dtv.titre":"متوسط titre عمر يوم","dtv.cv":"معامل الاختلاف CV %","dtv.bird":"نوع الطائر",
       "dtv.broiler":"تسمين (Broiler)","dtv.breeder":"أمهات (Breeder)","dtv.layer":"بياض (Layer)",
       "dtv.vaccine":"نوع اللقاح","dtv.interm":"Intermediate (الهدف 100-250)","dtv.plus":"Intermediate Plus (الهدف 400-500)",
@@ -1280,7 +1280,7 @@ function printReport(){
     <tr><td class="k">Location</td><td>${esc(s.location||"-")}</td></tr>${s.reportLink?`<tr><td class="k">Incoming report</td><td>${esc(s.reportLink)}</td></tr>`:""}</table>
   <h2>Submission Form</h2><table>${formHtml||'<tr><td>-</td></tr>'}</table>
   <h2>Results</h2><table><tr><th>Test</th><th>Result</th></tr>${testsHtml}</table>
-  <div class="ft">Generated by Poultry Lab System v2.6 on ${new Date().toLocaleString()}. Serology interpretation is guidance only, compiled from IDEXX/IDvet/BioChek published baselines - always confirm with farm-specific history and clinical signs. Local working copy - for internal use.</div>
+  <div class="ft">Generated by Poultry Lab System v2.7 on ${new Date().toLocaleString()}. Serology interpretation is guidance only, compiled from IDEXX/IDvet/BioChek published baselines - always confirm with farm-specific history and clinical signs. Local working copy - for internal use.</div>
   <script>window.onload=function(){window.print();}<\/script></body></html>`;
   const w=window.open("","_blank");if(!w){Toast.show("Allow pop-ups to print the report.","warn");return;}
   w.document.open();w.document.write(html);w.document.close();
@@ -1631,7 +1631,73 @@ function renderInterpretation(blk,disease,st){
       +`<div class="hint">${Lang.current()==="ar"?"يشمل العينة الحالية. تآكل تدريجي قد يعني تحديًا حقليًا؛ ارتفاع مفاجئ قد يعني عدوى.":"Includes current sample. Gradual decline may indicate field challenge; sudden rise may indicate infection."}</div></div>`;
   }
   h+="</div>";
+  if(disease==="IBD"){h+=deventerPanelHTML(blk);}
   host.innerHTML=h;
+  if(disease==="IBD")wireDeventerPanel(blk);
+}
+/* ---- Deventer (Mon3m) calculator UI, embedded in IBD serology interpretation ---- */
+function deventerPanelHTML(blk){
+  const ar=Lang.current()==="ar";
+  const bird=(CURRENT&&CURRENT.birdType||"").toLowerCase();
+  const birdKey=bird==="breeder"?"breeder":bird==="layer"?"layer":"broiler";
+  const age=(CURRENT&&CURRENT.ageDays)||0;
+  return `<div class="dtv-box" data-dev="1">
+    <div class="big" style="font-size:15px">${ar?"حاسبة يوم تحصين الجمبورو (Mon3m - طريقة Deventer)":"IBD Vaccination Day Calculation (Mon3m - Deventer)"}</div>
+    <div class="hint" style="margin:4px 0 10px">${ar?"بتستخدم التيترات الفردية اللي أدخلتها فوق (مش المتوسط)، زي معادلة Deventer الأصلية. الحد الأدنى 18 عينة.":"Uses the individual titres entered above (not the mean), per the original Deventer formula. Minimum 18 samples."}</div>
+    <div class="row3">
+      <div class="fld"><label>${ar?"نوع الطائر":"Bird type"}</label><select class="dev-bird">
+        <option value="broiler" ${birdKey==="broiler"?"selected":""}>${ar?"تسمين":"Broiler"}</option>
+        <option value="breeder" ${birdKey==="breeder"?"selected":""}>${ar?"أمهات":"Breeder"}</option>
+        <option value="layer" ${birdKey==="layer"?"selected":""}>${ar?"بياض":"Layer"}</option></select></div>
+      <div class="fld"><label>${ar?"عمر سحب العينة (يوم)":"Age at sampling (days)"}</label><input class="dev-age" type="number" min="0" value="${esc(String(age||""))}" placeholder="e.g. 1"></div>
+      <div class="fld"><label>${ar?"نسبة الفلوك المستهدفة":"Target flock %"}</label><select class="dev-cut">
+        <option value="0.75" selected>75% (${ar?"موصى به":"recommended"})</option>
+        <option value="0.90">90%</option><option value="0.70">70%</option>
+        <option value="0.40">40%</option><option value="0.25">25%</option></select></div>
+    </div>
+    <div class="row3">
+      <div class="fld"><label>${ar?"نوع اللقاح":"Vaccine class"}</label><select class="dev-vax">
+        <option value="intermediate">${ar?"Intermediate":"Intermediate"}</option>
+        <option value="plus">${ar?"Intermediate Plus":"Intermediate Plus"}</option>
+        <option value="hot">${ar?"Hot strain":"Hot strain"}</option></select></div>
+      <div class="fld"><label>${ar?"عتبة الاختراق (Breakthrough)":"Breakthrough titre"}</label><select class="dev-bt"></select></div>
+      <div class="fld" style="display:flex;align-items:flex-end"><button class="btn dev-calc" style="width:100%">${ar?"احسب يوم التحصين":"Calculate vaccination day"}</button></div>
+    </div>
+    <div class="dev-result"></div>
+  </div>`;
+}
+const DEV_BT={intermediate:[100,125,200,250],plus:[500,600],hot:[700,800]};
+function wireDeventerPanel(blk){
+  const box=blk.querySelector('[data-dev="1"]');if(!box)return;
+  const vaxSel=box.querySelector(".dev-vax"),btSel=box.querySelector(".dev-bt");
+  function fillBt(){const opts=DEV_BT[vaxSel.value]||[125];btSel.innerHTML=opts.map(v=>`<option value="${v}">${v}</option>`).join("");}
+  fillBt();vaxSel.onchange=fillBt;
+  box.querySelector(".dev-calc").onclick=()=>runDeventer(blk,box);
+}
+function runDeventer(blk,box){
+  const ar=Lang.current()==="ar";
+  const titres=$$(".r-titre",blk).map(i=>parseFloat(i.value)).filter(v=>!isNaN(v)&&v>0);
+  const res=box.querySelector(".dev-result");
+  const birdKey=box.querySelector(".dev-bird").value;
+  const age=parseFloat(box.querySelector(".dev-age").value)||0;
+  const cutoff=parseFloat(box.querySelector(".dev-cut").value);
+  const bt=parseFloat(box.querySelector(".dev-bt").value);
+  const thalf=DEV_HALFLIFE[birdKey];
+  if(titres.length<18){
+    res.innerHTML=`<div class="hint" style="color:var(--red);margin-top:8px">${ar?`عدد التيترات ${titres.length} - لازم 18 على الأقل لتقدير موثوق (زي شرط Deventer).`:`Only ${titres.length} titres - Deventer requires at least 18 for a reliable estimate.`}</div>`;return;
+  }
+  const day=deventerDay(titres,age,cutoff,bt,thalf);
+  const gapDay=deventerDay(titres,age,0.25,bt,thalf); // lowest-25% line for gap
+  const gap=(day!=null&&gapDay!=null)?(day-gapDay):null;
+  const vacAge=Math.round(day);
+  let warn="";
+  if(gap!=null&&gap>=6)warn=`<div class="hint" style="color:var(--amber-d);margin-top:6px">${ar?`الفجوة ${Math.round(gap)} يوم بين أقل 25% و${Math.round(cutoff*100)}% كبيرة - قد يشير لتجانس ضعيف؛ فكّر في تحصين مزدوج لتغطية الطيور منخفضة التيتر.`:`Gap of ${Math.round(gap)} days between lowest 25% and ${Math.round(cutoff*100)}% is large - poor uniformity; consider a double vaccination to cover low-titre birds.`}</div>`;
+  res.innerHTML=`<div style="margin-top:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)">
+    <div class="big" style="font-size:20px;color:var(--amber-d)">${ar?"يوم التحصين المقترح: عمر ":"Suggested vaccination: day "}${vacAge}</div>
+    <div class="hint" style="margin-top:6px">${ar?"أي بعد ":"i.e. "}${Math.round(day-age)} ${ar?"يوم من السحب":"days after sampling"} &middot; ${ar?"نوع الطائر":"bird"}: ${birdKey} (T&frac12;=${thalf}${ar?"يوم":"d"}) &middot; ${ar?"العتبة":"breakthrough"}: ${bt} &middot; ${ar?"النسبة":"target"}: ${Math.round(cutoff*100)}% &middot; n=${titres.length}</div>
+    ${warn}
+    <div class="hint" style="margin-top:6px">${ar?"تقدير إرشادي بمعادلة Deventer (de Wit) - يفترض ELISA بمعايرة IDEXX. أكّد بالسياق الحقلي والإكلينيكي.":"Deventer (de Wit) estimate - assumes IDEXX-standard ELISA calibration. Confirm with field pressure and clinical context."}</div>
+  </div>`;
 }
 /* Build [{date,gmt}] series for a disease on the current farm, including current live stat */
 function trendSeries(disease,current,liveStat){
@@ -1740,6 +1806,26 @@ function renderAlerts(){
    flock non-uniformity (CV) so low-MDA birds are protected.
    ============================================================================ */
 const HALF_LIFE={broiler:3.8,breeder:4.5,layer:6.0};
+/* ============================================================================
+   DEVENTER FORMULA (Mon3m) - true individual-titre IBD vaccination-day estimate
+   Replicates the Animal Health Service (de Wit) Excel exactly:
+   Vac age = (log2(titre at target%) - log2(breakthrough)) * T1/2 + ageSample
+             + correction(0-4 days). Uses LARGE(titres,(1-cutoff)*n+1), i.e. the
+     titre of the bird at the chosen flock percentile - NOT the mean.
+   T1/2: broiler 3.0, breeder 4.5, layer 5.5 days (VN-standard, per de Wit).
+   Verified against the source workbook (broiler D-78 75% = 22.30 days, etc).
+   ============================================================================ */
+const DEV_HALFLIFE={broiler:3.0,breeder:4.5,layer:5.5};
+function largeK(arr,k){const s=[...arr].sort((a,b)=>b-a);return s[Math.max(0,Math.min(s.length-1,Math.trunc(k)-1))];}
+function deventerDay(titres,ageSample,cutoff,breakthrough,thalf){
+  const vals=titres.filter(v=>v>0);const n=vals.length;
+  if(n<18)return null;
+  const log2=x=>Math.log(x)/Math.LN2;
+  const idx=(1-cutoff)*n+1;
+  const t=largeK(vals,idx);
+  const corr=ageSample>4?0:4-ageSample;
+  return (log2(t)-log2(breakthrough))*thalf+ageSample+corr;
+}
 function calcDTV(mda,target,halfLife,bleedAge,cv){
   if(!(mda>0)||!(target>0)||mda<=target)return null;
   const log2=x=>Math.log(x)/Math.LN2;
@@ -1861,7 +1947,7 @@ function aggregateSerologyPDF(){
     <h1>${ar?"ملخص النتائج السيرولوجية":"Serology Results Summary"}</h1>
     <div style="font-size:12px;color:#555">${ar?"النطاق الزمني":"Date range"}: ${esc(from||"—")} &rarr; ${esc(to||"—")} &middot; ${ar?"تاريخ التقرير":"Generated"}: ${today()}</div>
     ${body}
-    <div class="ft">${ar?"تقرير مجمّع من Poultry Lab System v2.6 - متوسطات GMT/CV إرشادية، أكّد بالسياق الإكلينيكي.":"Aggregate report from Poultry Lab System v2.6 - GMT/CV averages are guidance; confirm with clinical context."}</div>
+    <div class="ft">${ar?"تقرير مجمّع من Poultry Lab System v2.7 - متوسطات GMT/CV إرشادية، أكّد بالسياق الإكلينيكي.":"Aggregate report from Poultry Lab System v2.7 - GMT/CV averages are guidance; confirm with clinical context."}</div>
     <script>window.onload=function(){window.print();}<\/script></body></html>`;
   const w=window.open("","_blank");if(!w){Toast.show(ar?"اسمح بالنوافذ المنبثقة للطباعة.":"Allow pop-ups to print.","warn");return;}
   w.document.open();w.document.write(html);w.document.close();
