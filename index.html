@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Poultry Lab Submission and Results System - manage sample submissions, PCR and serology results, GMT/CV analysis and reports across partner laboratories.">
 <meta name="color-scheme" content="light dark">
-<title>Poultry Lab System v2.8</title>
+<title>Poultry Lab System v2.9</title>
 <style>
 /* ============================================================
    THEME TOKENS  (light default + dark override)
@@ -262,6 +262,11 @@ html[data-theme="dark"] .pill.New{color:#f5c877}
 .dtv-box{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)}
 .dtv-box .big{font-size:22px;font-weight:800;color:var(--amber-d)}
 .trend-wrap{margin-top:8px}
+.titre-input-tbl{width:100%;border-collapse:collapse}
+.titre-input-tbl td{border:1px solid var(--line);padding:0}
+.titre-input-tbl td.idx{width:44px;text-align:center;color:var(--muted);font-size:12px;background:var(--surface-2)}
+.titre-input-tbl input{border:none;width:100%;padding:6px 8px;background:transparent;color:var(--ink);font-family:monospace;text-align:left}
+.titre-input-tbl input:focus{outline:2px solid var(--amber);outline-offset:-2px}
 
 .addbtn{font-size:12px;color:var(--amber-d);background:none;border:none;cursor:pointer;font-weight:700;margin-top:8px}
 .removebtn{background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;line-height:1}
@@ -344,7 +349,7 @@ html[dir="rtl"] .interp-tbl th,html[dir="rtl"] .interp-tbl td{text-align:right}
       <button class="theme-toggle" id="langBtn" aria-label="Toggle language" style="margin-bottom:8px"><span>&#127760;</span><span id="langLbl">العربية</span></button>
       <button class="theme-toggle" id="themeBtn" aria-label="Toggle theme"><span id="themeIco"></span><span id="themeLbl">Dark mode</span></button>
       <button class="theme-toggle" id="updateBtn" aria-label="Check for updates" style="margin-top:8px"><span>&#8635;</span><span data-i18n="upd.check">Check for updates</span></button>
-      <div class="ver" id="verLabel">Version 2.8.0</div>
+      <div class="ver" id="verLabel">Version 2.9.0</div>
       <div class="ver" id="updMsg" style="font-size:10px;margin-top:2px"></div>
     </div>
   </aside>
@@ -401,6 +406,10 @@ html[dir="rtl"] .interp-tbl th,html[dir="rtl"] .interp-tbl td{text-align:right}
           </div>
           <div id="dtvResult"></div>
         </div>
+        <div class="card"><h3 data-i18n="dev.title">IBD Vaccination Day (Mon3m - Deventer formula)</h3>
+          <p class="hint" data-i18n="dev.dashHint" style="margin-bottom:10px">The accurate Deventer calculation with individual titres, multiple vaccinations and editable flock percentiles lives in its own tab.</p>
+          <button class="btn" id="devGoBtn" data-i18n="dev.open">Open Deventer calculator</button>
+        </div>
       </section>
 
       <!-- NEW SUBMISSION -->
@@ -429,7 +438,17 @@ html[dir="rtl"] .interp-tbl th,html[dir="rtl"] .interp-tbl td{text-align:right}
           <div class="row3">
             <div class="fld"><label data-i18n="new.birdType">Bird type</label><select id="f_birdtype"><option value="">-</option><option>Broiler</option><option>Breeder</option><option>Layer</option></select></div>
             <div class="fld"><label data-i18n="new.age">Age at sampling (days)</label><input id="f_age" type="number" min="0" placeholder="e.g. 35"></div>
-            <div class="fld"><label data-i18n="new.region">Region / Governorate</label><input id="f_region" list="dl_region" placeholder="e.g. Sharqia"><datalist id="dl_region"></datalist></div>
+            <div class="fld"></div>
+          </div>
+          <div class="row3">
+            <div class="fld"><label data-i18n="new.country">Country</label><select id="f_country"><option value="" data-i18n="new.selCountry">- Select country -</option><option value="Egypt">Egypt / مصر</option><option value="Saudi Arabia">Saudi Arabia / السعودية</option></select></div>
+            <div class="fld"><label data-i18n="new.ksaRegion">Region (KSA)</label><select id="f_ksaregion" disabled><option value="">-</option></select></div>
+            <div class="fld"><label data-i18n="new.gov">Governorate</label><select id="f_gov" disabled><option value="">-</option></select></div>
+          </div>
+          <div class="row3">
+            <div class="fld"><label data-i18n="new.city">City</label><select id="f_city" disabled><option value="">-</option></select></div>
+            <div class="fld"><label data-i18n="new.postal">Postal code</label><input id="f_postal" dir="ltr" placeholder="auto" readonly></div>
+            <div class="fld"><label data-i18n="new.region">Region / Governorate (free text)</label><input id="f_region" list="dl_region" placeholder="e.g. Sharqia"><datalist id="dl_region"></datalist></div>
           </div>
         </div>
         <div class="card"><h3 data-i18n="new.s2">2 &middot; Choose Laboratory</h3>
@@ -547,10 +566,17 @@ html[dir="rtl"] .interp-tbl th,html[dir="rtl"] .interp-tbl td{text-align:right}
       <section id="v-deventer" class="view">
         <div class="page-h"><h2 data-i18n="dev.pageTitle">IBD Vaccination Day - Deventer (Mon3m)</h2><p data-i18n="dev.pageSub">The accurate Deventer method using individual titres. Supports multiple vaccinations with different flock percentiles.</p></div>
         <div class="card">
-          <p class="hint" data-i18n="dev.hint" style="margin-bottom:10px">Paste at least 18 ELISA titres - one per line, or separated by commas/spaces/tabs (you can paste a column straight from Excel).</p>
+          <p class="hint" data-i18n="dev.hint2" style="margin-bottom:10px">Enter individual ELISA titres in the table (Enter/Tab moves to the next cell). Minimum 18. You can also paste a whole column from Excel into the first cell.</p>
           <div class="row">
-            <div class="fld"><label data-i18n="dev.titres">Individual ELISA titres</label><textarea id="devTitres" rows="8" dir="ltr" placeholder="1224&#10;1456&#10;1821&#10;..." style="width:100%;font-family:monospace;resize:vertical"></textarea>
-              <div class="hint" id="devCount" style="margin-top:4px"></div></div>
+            <div class="fld"><label data-i18n="dev.titres">Individual ELISA titres</label>
+              <div style="max-height:320px;overflow:auto;border:1px solid var(--line);border-radius:8px">
+                <table class="titre-input-tbl" id="devTitreTbl"><tbody></tbody></table>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+                <button type="button" class="addbtn" id="devAddRow" data-i18n="dev.addRow">+ Add row</button>
+                <button type="button" class="addbtn" id="devClear" data-i18n="dev.clear">Clear all</button>
+                <span class="hint" id="devCount"></span>
+              </div></div>
             <div>
               <div class="row" style="grid-template-columns:1fr 1fr">
                 <div class="fld"><label data-i18n="dev.bird">Bird type</label><select id="devBird"><option value="broiler" data-i18n="dtv.broiler">Broiler</option><option value="breeder" data-i18n="dtv.breeder">Breeder</option><option value="layer" data-i18n="dtv.layer">Layer</option></select></div>
@@ -571,7 +597,7 @@ html[dir="rtl"] .interp-tbl th,html[dir="rtl"] .interp-tbl td{text-align:right}
 
 
       <div class="foot">
-        Poultry Lab System v2.8 &middot; Local working copy - all data is saved in this browser only. Attachments are stored as links.<br>
+        Poultry Lab System v2.9 &middot; Local working copy - all data is saved in this browser only. Attachments are stored as links.<br>
         Labs: Vetbio Global (KSA) &middot; Royal GD (NL) &middot; ANICON/SAN Group (DE) &middot; x-OvO Flockscreen.
       </div>
     </div>
@@ -586,7 +612,73 @@ html[dir="rtl"] .interp-tbl th,html[dir="rtl"] .interp-tbl td{text-align:right}
 <script>
 "use strict";
 /* Build metadata - single source of truth for version display + update checks */
-const BUILD={version:"2.8.0",date:"2026-07-02",label:"v2.8.0 (2026-07-02)"};
+const BUILD={version:"2.9.0",date:"2026-07-02",label:"v2.9.0 (2026-07-02)"};
+/* Geography data: Egypt (governorate -> cities) + Saudi Arabia (region -> governorate -> cities)
+   Postal codes: Egypt uses per-governorate representative codes; KSA uses region-level short codes.
+   Compiled offline. Not exhaustive to every village; covers governorates/regions and major cities. */
+const GEO={
+  Egypt:{type:"gov",label_en:"Egypt",label_ar:"مصر",
+    govs:{
+      "Cairo|القاهرة":{pc:"11511",cities:["Nasr City|مدينة نصر","Maadi|المعادي","Heliopolis|مصر الجديدة","Helwan|حلوان","New Cairo|القاهرة الجديدة","Shubra|شبرا","Downtown|وسط البلد"]},
+      "Giza|الجيزة":{pc:"12511",cities:["Giza|الجيزة","6th of October|السادس من أكتوبر","Sheikh Zayed|الشيخ زايد","Dokki|الدقي","Haram|الهرم","Badrashin|البدرشين","Saff|الصف"]},
+      "Alexandria|الإسكندرية":{pc:"21500",cities:["Alexandria|الإسكندرية","Borg El Arab|برج العرب","Amreya|العامرية","Montaza|المنتزه"]},
+      "Dakahlia|الدقهلية":{pc:"35511",cities:["Mansoura|المنصورة","Talkha|طلخا","Mit Ghamr|ميت غمر","Aga|أجا","Belqas|بلقاس","Dekernes|دكرنس"]},
+      "Sharqia|الشرقية":{pc:"44511",cities:["Zagazig|الزقازيق","10th of Ramadan|العاشر من رمضان","Bilbeis|بلبيس","Abu Hammad|أبو حماد","Faqous|فاقوس","Minya al-Qamh|منيا القمح"]},
+      "Qalyubia|القليوبية":{pc:"13511",cities:["Banha|بنها","Qalyub|قليوب","Shubra El Kheima|شبرا الخيمة","Qanater|القناطر الخيرية","Khanka|الخانكة","Khosous|الخصوص"]},
+      "Kafr El Sheikh|كفر الشيخ":{pc:"33511",cities:["Kafr El Sheikh|كفر الشيخ","Desouk|دسوق","Fuwa|فوه","Baltim|بلطيم","Metoubes|مطوبس"]},
+      "Gharbia|الغربية":{pc:"31511",cities:["Tanta|طنطا","El Mahalla El Kubra|المحلة الكبرى","Kafr El Zayat|كفر الزيات","Zefta|زفتى","Samannoud|سمنود","Basyoun|بسيون"]},
+      "Monufia|المنوفية":{pc:"32511",cities:["Shibin El Kom|شبين الكوم","Menouf|منوف","Sadat City|مدينة السادات","Ashmoun|أشمون","Quesna|قويسنا","Berket El Sabaa|بركة السبع"]},
+      "Beheira|البحيرة":{pc:"22511",cities:["Damanhour|دمنهور","Kafr El Dawwar|كفر الدوار","Rashid|رشيد","Edku|إدكو","Abu Hummus|أبو حمص","Kom Hamada|كوم حمادة"]},
+      "Ismailia|الإسماعيلية":{pc:"41511",cities:["Ismailia|الإسماعيلية","Fayed|فايد","Qantara|القنطرة","Tell El Kebir|التل الكبير"]},
+      "Port Said|بورسعيد":{pc:"42511",cities:["Port Said|بورسعيد","Port Fouad|بورفؤاد"]},
+      "Suez|السويس":{pc:"43511",cities:["Suez|السويس","Ain Sokhna|العين السخنة"]},
+      "Damietta|دمياط":{pc:"34511",cities:["Damietta|دمياط","New Damietta|دمياط الجديدة","Ras El Bar|رأس البر","Faraskur|فارسكور","Kafr Saad|كفر سعد"]},
+      "Fayoum|الفيوم":{pc:"63511",cities:["Fayoum|الفيوم","Sinnuris|سنورس","Tamiya|طامية","Ibsheway|إبشواي","Yousef El Seddik|يوسف الصديق"]},
+      "Beni Suef|بني سويف":{pc:"62511",cities:["Beni Suef|بني سويف","Nasser|ناصر","Wasta|الواسطى","Biba|ببا","Fashn|الفشن","Sumusta|سمسطا"]},
+      "Minya|المنيا":{pc:"61511",cities:["Minya|المنيا","Mallawi|ملوي","Bani Mazar|بني مزار","Maghagha|مغاغة","Samalut|سمالوط","Matay|مطاي","Abu Qurqas|أبو قرقاص"]},
+      "Assiut|أسيوط":{pc:"71511",cities:["Assiut|أسيوط","Dairut|ديروط","Manfalut|منفلوط","Abnub|أبنوب","Abu Tig|أبو تيج","El Badari|البداري"]},
+      "Sohag|سوهاج":{pc:"82511",cities:["Sohag|سوهاج","Akhmim|أخميم","Girga|جرجا","Tahta|طهطا","Tema|طما","Maragha|المراغة","Balyana|البلينا"]},
+      "Qena|قنا":{pc:"83511",cities:["Qena|قنا","Nag Hammadi|نجع حمادي","Qus|قوص","Deshna|دشنا","Naqada|نقادة","Farshut|فرشوط"]},
+      "Luxor|الأقصر":{pc:"85511",cities:["Luxor|الأقصر","Esna|إسنا","Armant|أرمنت","Qurna|القرنة"]},
+      "Aswan|أسوان":{pc:"81511",cities:["Aswan|أسوان","Kom Ombo|كوم أمبو","Edfu|إدفو","Daraw|دراو","Nasr El Nuba|نصر النوبة"]},
+      "Red Sea|البحر الأحمر":{pc:"84511",cities:["Hurghada|الغردقة","Safaga|سفاجا","Quseir|القصير","Marsa Alam|مرسى علم","Ras Gharib|رأس غارب"]},
+      "New Valley|الوادي الجديد":{pc:"72511",cities:["Kharga|الخارجة","Dakhla|الداخلة","Farafra|الفرافرة","Baris|باريس"]},
+      "Matrouh|مطروح":{pc:"51511",cities:["Marsa Matrouh|مرسى مطروح","El Alamein|العلمين","Sidi Barrani|سيدي براني","Siwa|سيوة","Dabaa|الضبعة"]},
+      "North Sinai|شمال سيناء":{pc:"45511",cities:["Arish|العريش","Sheikh Zuweid|الشيخ زويد","Bir al-Abd|بئر العبد","Rafah|رفح"]},
+      "South Sinai|جنوب سيناء":{pc:"46511",cities:["El Tor|الطور","Sharm El Sheikh|شرم الشيخ","Dahab|دهب","Nuweiba|نويبع","Saint Catherine|سانت كاترين","Abu Rudeis|أبو رديس"]}
+    }
+  },
+  "Saudi Arabia":{type:"region",label_en:"Saudi Arabia",label_ar:"السعودية",
+    regions:{
+      "Riyadh (Central)|الرياض (الوسطى)":{pc:"11564",govs:{
+        "Riyadh|الرياض":["Riyadh|الرياض","Diriyah|الدرعية","Kharj|الخرج","Dawadmi|الدوادمي","Majmaah|المجمعة","Zulfi|الزلفي","Afif|عفيف","Quwaiyah|القويعية"]}},
+      "Makkah (Western)|مكة المكرمة (الغربية)":{pc:"21955",govs:{
+        "Makkah|مكة":["Makkah|مكة","Jeddah|جدة","Taif|الطائف","Rabigh|رابغ","Qunfudhah|القنفذة","Jumum|الجموم","Khulais|خليص"]}},
+      "Madinah (Western)|المدينة المنورة (الغربية)":{pc:"42311",govs:{
+        "Madinah|المدينة":["Madinah|المدينة","Yanbu|ينبع","Badr|بدر","Ula|العلا","Mahd adh Dhahab|مهد الذهب","Khaybar|خيبر"]}},
+      "Eastern Province|المنطقة الشرقية":{pc:"31952",govs:{
+        "Eastern|الشرقية":["Dammam|الدمام","Khobar|الخبر","Dhahran|الظهران","Jubail|الجبيل","Hofuf (Al-Ahsa)|الهفوف (الأحساء)","Qatif|القطيف","Hafr Al-Batin|حفر الباطن","Khafji|الخفجي"]}},
+      "Asir (Southern)|عسير (الجنوبية)":{pc:"61411",govs:{
+        "Asir|عسير":["Abha|أبها","Khamis Mushait|خميس مشيط","Bisha|بيشة","Namas|النماص","Muhayil|محايل عسير","Sarat Abidah|سراة عبيدة"]}},
+      "Jazan (Southern)|جازان (الجنوبية)":{pc:"82611",govs:{
+        "Jazan|جازان":["Jazan|جازان","Sabya|صبيا","Abu Arish|أبو عريش","Samtah|صامطة","Ahad al-Masarihah|أحد المسارحة","Farasan|فرسان"]}},
+      "Najran (Southern)|نجران (الجنوبية)":{pc:"66251",govs:{
+        "Najran|نجران":["Najran|نجران","Sharurah|شرورة","Hubuna|حبونا","Badr al-Janub|بدر الجنوب"]}},
+      "Al-Bahah (Southern)|الباحة (الجنوبية)":{pc:"65511",govs:{
+        "Al-Bahah|الباحة":["Al-Bahah|الباحة","Baljurashi|بلجرشي","Mandaq|المندق","Qilwah|قلوة","Mikhwah|المخواة"]}},
+      "Tabuk (Northern)|تبوك (الشمالية)":{pc:"47311",govs:{
+        "Tabuk|تبوك":["Tabuk|تبوك","Duba|ضباء","Tayma|تيماء","Umluj|أملج","Haql|حقل","Wajh|الوجه"]}},
+      "Hail (Northern)|حائل (الشمالية)":{pc:"55421",govs:{
+        "Hail|حائل":["Hail|حائل","Baqaa|بقعاء","Ghazalah|الغزالة","Shinan|الشنان","Samira|سميراء"]}},
+      "Northern Borders|الحدود الشمالية":{pc:"73311",govs:{
+        "Northern Borders|الحدود الشمالية":["Arar|عرعر","Rafha|رفحاء","Turaif|طريف","Uwayqilah|العويقيلة"]}},
+      "Al-Jawf (Northern)|الجوف (الشمالية)":{pc:"72341",govs:{
+        "Al-Jawf|الجوف":["Sakaka|سكاكا","Qurayyat|القريات","Dumat al-Jandal|دومة الجندل","Tabarjal|طبرجل"]}},
+      "Qassim (Central)|القصيم (الوسطى)":{pc:"51431",govs:{
+        "Qassim|القصيم":["Buraydah|بريدة","Unayzah|عنيزة","Rass|الرس","Mithnab|المذنب","Bukayriyah|البكيرية","Badai|البدائع"]}}
+    }
+  }
+};
 /* ============================================================================
    POULTRY LAB SYSTEM  v2.7
    Single-file offline app. Organised into small modules:
@@ -814,6 +906,10 @@ const Lang=(()=>{
       "dev.pageTitle":"يوم تحصين الجمبورو - Deventer (Mon3m)",
       "dev.pageSub":"طريقة Deventer الدقيقة بالتيترات الفردية. تدعم تحصينات متعددة بنِسب فلوك مختلفة.",
       "dev.nvac":"عدد مرات التحصين","dev.targets":"نسبة الفلوك المستهدفة (واحدة لكل تحصينة، قابلة للتعديل)",
+      "dev.hint2":"أدخل التيترات الفردية في الجدول (Enter/Tab ينقلك للخانة اللي تحت). الحد الأدنى 18. تقدر كمان تلصق عمود كامل من Excel في أول خانة.",
+      "dev.addRow":"+ صف جديد","dev.clear":"مسح الكل",
+      "dev.dashHint":"الحساب الدقيق بطريقة Deventer بالتيترات الفردية والتحصينات المتعددة والنسب القابلة للتعديل موجود في تبويب مستقل.",
+      "dev.open":"افتح حاسبة Deventer",
       "new.title":"عينة جديدة","new.sub":"العميل والعينة \u2190 اختر المعمل \u2190 نموذج المعمل والاختبارات.",
       "new.s1":"1 \u00b7 العميل والعينة","new.s2":"2 \u00b7 اختر المعمل","new.s4":"4 \u00b7 الاختبارات المطلوبة",
       "ph.company":"مثال: الفقيه / أرياش","new.company":"اسم الشركة / العميل *","new.farm":"اسم المزرعة *","new.sampleDesc":"وصف العينة",
@@ -821,7 +917,8 @@ const Lang=(()=>{
       "new.date":"تاريخ العينة","new.sampleNo":"رقم العينة","new.manager":"مدير المنطقة",
       "new.cmethod":"طريقة التواصل","new.cdetails":"بيانات التواصل","new.location":"الموقع (رابط خريطة / عنوان)",
       "new.gps":"استخدم موقع GPS الحالي","new.birdType":"نوع الطائر","new.age":"العمر عند أخذ العينة (يوم)",
-      "new.region":"المنطقة / المحافظة","new.lab":"المعمل *","new.testsHint":"كل اختبار موسوم PCR أو Serology - وده بيحدد طريقة إدخال النتيجة.",
+      "new.region":"المنطقة / المحافظة (نص حر)","new.lab":"المعمل *","new.testsHint":"كل اختبار موسوم PCR أو Serology - وده بيحدد طريقة إدخال النتيجة.",
+      "new.country":"الدولة","new.selCountry":"- اختر الدولة -","new.ksaRegion":"المنطقة (السعودية)","new.gov":"المحافظة","new.city":"المدينة","new.postal":"الرقم البريدي",
       "new.create":"إنشاء العينة","btn.clear":"مسح",
       "my.title":"عيناتي","my.sub":"اضغط على أي صف لفتح ورقة العينة، إدخال النتائج، إرفاق تقرير المعمل، أو طباعة PDF.",
       "my.filterPh":"فلترة بالكود أو الشركة أو المزرعة...","my.exportCsv":"تصدير CSV","my.printLabels":"طباعة ليبلات",
@@ -1001,6 +1098,67 @@ function initNewForm(){
   labSel.innerHTML=`<option value="">- Select a laboratory -</option>`+Object.keys(allLabs()).map(k=>`<option value="${k}">${esc(getLab(k).full)}</option>`).join("");
   el("dl_manager").innerHTML=(CONFIG().managers||[]).map(c=>`<option value="${esc(c)}">`).join("");
   if(el("f_date")&&!el("f_date").value)el("f_date").value=today();
+  initGeo();
+}
+/* ---- Geography cascade: country -> region(KSA) -> governorate -> city -> postal ---- */
+function geoName(pair){return (pair||"").split("|")[0];}
+function geoAr(pair){const p=(pair||"").split("|");return p[1]||p[0];}
+function geoLabel(pair){const ar=Lang.current&&Lang.current()==="ar";return ar?geoAr(pair):geoName(pair);}
+function initGeo(){
+  const c=el("f_country");if(!c)return;
+  c.onchange=onCountryChange;
+  el("f_ksaregion").onchange=onKsaRegionChange;
+  el("f_gov").onchange=onGovChange;
+  el("f_city").onchange=onCityChange;
+  onCountryChange();
+}
+function setOpts(sel,pairs,placeholder){
+  sel.innerHTML=`<option value="">${placeholder||"-"}</option>`+pairs.map(p=>`<option value="${esc(p)}">${esc(geoLabel(p))}</option>`).join("");
+}
+function onCountryChange(){
+  const country=el("f_country").value;
+  const rSel=el("f_ksaregion"),gSel=el("f_gov"),cSel=el("f_city");
+  rSel.innerHTML='<option value="">-</option>';gSel.innerHTML='<option value="">-</option>';cSel.innerHTML='<option value="">-</option>';
+  rSel.disabled=gSel.disabled=cSel.disabled=true;el("f_postal").value="";
+  if(country==="Saudi Arabia"){
+    rSel.disabled=false;
+    setOpts(rSel,Object.keys(GEO["Saudi Arabia"].regions),"- اختر المنطقة / Region -");
+  }else if(country==="Egypt"){
+    gSel.disabled=false;
+    setOpts(gSel,Object.keys(GEO.Egypt.govs),"- اختر المحافظة / Governorate -");
+  }
+}
+function onKsaRegionChange(){
+  const region=el("f_ksaregion").value,gSel=el("f_gov"),cSel=el("f_city");
+  gSel.innerHTML='<option value="">-</option>';cSel.innerHTML='<option value="">-</option>';cSel.disabled=true;
+  el("f_postal").value="";
+  if(!region){gSel.disabled=true;return;}
+  const rObj=GEO["Saudi Arabia"].regions[region];
+  el("f_postal").value=rObj.pc||"";
+  gSel.disabled=false;
+  setOpts(gSel,Object.keys(rObj.govs),"- اختر المحافظة / Governorate -");
+}
+function onGovChange(){
+  const country=el("f_country").value,cSel=el("f_city");
+  cSel.innerHTML='<option value="">-</option>';
+  if(country==="Egypt"){
+    const gov=el("f_gov").value;if(!gov){cSel.disabled=true;el("f_postal").value="";return;}
+    const gObj=GEO.Egypt.govs[gov];el("f_postal").value=gObj.pc||"";
+    cSel.disabled=false;setOpts(cSel,gObj.cities,"- اختر المدينة / City -");
+  }else if(country==="Saudi Arabia"){
+    const region=el("f_ksaregion").value,gov=el("f_gov").value;if(!region||!gov){cSel.disabled=true;return;}
+    const cities=GEO["Saudi Arabia"].regions[region].govs[gov]||[];
+    cSel.disabled=false;setOpts(cSel,cities,"- اختر المدينة / City -");
+  }
+}
+function onCityChange(){
+  // keep postal from region/gov; also mirror the human-readable region into free-text field for reports
+  const country=el("f_country").value;
+  const parts=[];
+  if(country==="Saudi Arabia"){if(el("f_ksaregion").value)parts.push(geoName(el("f_ksaregion").value));if(el("f_gov").value)parts.push(geoName(el("f_gov").value));}
+  else if(country==="Egypt"){if(el("f_gov").value)parts.push(geoName(el("f_gov").value));}
+  if(el("f_city").value)parts.push(geoName(el("f_city").value));
+  if(parts.length&&!el("f_region").dataset.touched)el("f_region").value=parts.join(" - ");
 }
 function suggestCode(){
   const lab=el("f_lab").value;
@@ -1066,18 +1224,23 @@ function saveSubmission(){
   const manager=val("f_manager");
   if(manager&&!(cfg.managers||(cfg.managers=[])).includes(manager))cfg.managers.push(manager);
   const sampleDate=el("f_date").value||today();
+  const country=val("f_country");
+  const cityPair=val("f_city"),city=geoName(cityPair);
+  const postal=val("f_postal");
   const code=val("f_code")||suggestCode();
   DB().unshift({id:uid(),code,company,farm,sample:val("f_sample"),cmethod:val("f_cmethod"),cvalue:val("f_cvalue"),
     location:val("f_location"),birdType:val("f_birdtype"),ageDays:val("f_age"),region,manager,sampleNo:val("f_sampleno"),
-    lab,form,tests,status:"New",created:sampleDate,results:{},reportLink:"",updatedAt:Date.now()});
+    country,city,postal,lab,form,tests,status:"New",created:sampleDate,results:{},reportLink:"",updatedAt:Date.now()});
   Store.save("create","Created "+code);
   Toast.show("Submission "+code+" created.","ok");
   resetForm();go("my");
 }
 function resetForm(){
-  ["f_company","f_farm","f_sample","f_code","f_cvalue","f_location","f_age","f_region","f_sampleno","f_manager"].forEach(id=>el(id)&&(el(id).value=""));
+  ["f_company","f_farm","f_sample","f_code","f_cvalue","f_location","f_age","f_region","f_sampleno","f_manager","f_postal"].forEach(id=>el(id)&&(el(id).value=""));
   el("f_lab").value="";el("f_birdtype").value="";el("f_code").dataset.auto="1";el("gpsMsg").textContent="";el("saveMsg").textContent="";
   if(el("f_date"))el("f_date").value=today();
+  if(el("f_country")){el("f_country").value="";onCountryChange();}
+  if(el("f_region"))delete el("f_region").dataset.touched;
   renderLabForm();
 }
 function getGPS(){
@@ -1909,18 +2072,57 @@ function renderDTV(){
     <div class="hint" style="margin-top:6px">${ar?"نصف عمر الأجسام المضادة المستخدم: ":"Half-life used: "}${HALF_LIFE[bird]} ${ar?"يوم":"days"} &middot; ${ar?"العمر عند السحب: ":"Bleed age: "}D${bleed} &middot; ${ar?"الهدف: ":"target: "}${target}</div>
     <div class="hint" style="margin-top:4px;color:var(--amber-d)">${ar?"تقدير إرشادي - أكّد بنتائج المعمل الفعلية وظروف مزرعتك.":"Guidance estimate - confirm with actual lab results and your farm conditions."}</div></div>`;
 }
-/* ---- Standalone Deventer (Mon3m) view with multi-vaccination support ---- */
-function parseTitres(text){
-  return (text||"").split(/[\s,;]+/).map(s=>parseFloat(s)).filter(v=>!isNaN(v)&&v>0);
+/* ---- Standalone Deventer (Mon3m) view with table input + multi-vaccination ---- */
+const DEV_MIN_ROWS=20;
+function devReadTitres(){
+  return $$("#devTitreTbl input").map(i=>parseFloat(i.value)).filter(v=>!isNaN(v)&&v>0);
+}
+function devAddRow(focus){
+  const tb=el("devTitreTbl")&&el("devTitreTbl").querySelector("tbody");if(!tb)return;
+  const n=tb.children.length+1;
+  const tr=document.createElement("tr");
+  tr.innerHTML=`<td class="idx">${n}</td><td><input type="number" inputmode="numeric" dir="ltr"></td>`;
+  const inp=tr.querySelector("input");
+  inp.addEventListener("input",updateDevCount);
+  inp.addEventListener("keydown",e=>{
+    if(e.key==="Enter"||(e.key==="Tab"&&!e.shiftKey)){
+      const rows=$$("#devTitreTbl tr");const cur=tr;const next=cur.nextElementSibling;
+      if(!next){e.preventDefault();const nr=devAddRow(true);}
+      else if(e.key==="Enter"){e.preventDefault();next.querySelector("input").focus();}
+    }
+  });
+  inp.addEventListener("paste",e=>{
+    const txt=(e.clipboardData||window.clipboardData).getData("text");
+    if(/[\n\r,;\t ]/.test(txt.trim())){
+      e.preventDefault();
+      const nums=txt.split(/[\s,;]+/).map(s=>parseFloat(s)).filter(v=>!isNaN(v)&&v>0);
+      devFill(nums);
+    }
+  });
+  tb.appendChild(tr);
+  if(focus)inp.focus();
+  return tr;
+}
+function devFill(nums){
+  const tb=el("devTitreTbl").querySelector("tbody");tb.innerHTML="";
+  const total=Math.max(nums.length+2,DEV_MIN_ROWS);
+  for(let i=0;i<total;i++)devAddRow(false);
+  const inputs=$$("#devTitreTbl input");
+  nums.forEach((v,i)=>{if(inputs[i])inputs[i].value=v;});
+  updateDevCount();
+}
+function devEnsureRows(){
+  const tb=el("devTitreTbl")&&el("devTitreTbl").querySelector("tbody");if(!tb)return;
+  if(tb.children.length===0){for(let i=0;i<DEV_MIN_ROWS;i++)devAddRow(false);}
+}
+function updateDevCount(){
+  const ar=Lang.current()==="ar";const n=devReadTitres().length;const c=el("devCount");
+  if(!c)return;c.textContent=(ar?"عدد التيترات: ":"Titres entered: ")+n+(n<18?(ar?" (لازم 18 على الأقل)":" (need at least 18)"):" ✓");
+  c.style.color=n<18?"var(--red)":"var(--green)";
 }
 function fillDevBt(){
   const vax=el("devVax");if(!vax)return;const bt=el("devBt");
   const opts=DEV_BT[vax.value]||[125];bt.innerHTML=opts.map(v=>`<option value="${v}">${v}</option>`).join("");
-}
-function updateDevCount(){
-  const ar=Lang.current()==="ar";const n=parseTitres(el("devTitres").value).length;const c=el("devCount");
-  if(!c)return;c.textContent=(ar?"عدد التيترات: ":"Titres entered: ")+n+(n<18?(ar?" (لازم 18 على الأقل)":" (need at least 18)"):" ✓");
-  c.style.color=n<18?"var(--red)":"var(--green)";
 }
 /* Suggested target percentiles per number of vaccinations (editable defaults) */
 function suggestedTargets(nvac){
@@ -1942,11 +2144,11 @@ function renderDevTargets(){
 }
 function initDeventerView(){
   if(el("devVax")){fillDevBt();}
-  renderDevTargets();updateDevCount();
+  devEnsureRows();renderDevTargets();updateDevCount();
 }
 function renderDeventerDash(){
   const ar=Lang.current()==="ar";const host=el("devResult");
-  const titres=parseTitres(el("devTitres").value);
+  const titres=devReadTitres();
   const bird=el("devBird").value,age=parseFloat(el("devAge").value)||0,bt=parseFloat(el("devBt").value);
   const thalf=DEV_HALFLIFE[bird];
   if(titres.length<18){host.innerHTML=`<div class="hint" style="color:var(--red);margin-top:8px">${ar?`عدد التيترات ${titres.length} - لازم 18 على الأقل (شرط Deventer).`:`Only ${titres.length} titres - Deventer requires at least 18.`}</div>`;return;}
@@ -1957,7 +2159,6 @@ function renderDeventerDash(){
     const vacAge=Math.round(day),after=Math.round(day-age);
     rows+=`<tr><td><b>${ar?"تحصينة ":"Vac "}${i+1}</b></td><td>${pct}%</td><td><b style="color:var(--amber-d)">${ar?"عمر ":"day "}${vacAge}</b></td><td>${after} ${ar?"يوم بعد السحب":"d after sampling"}</td></tr>`;
   });
-  // gap between lowest and highest target
   let gapNote="";
   if(targets.length>=2){
     const lo=deventerDay(titres,age,targets[0]/100,bt,thalf),hi=deventerDay(titres,age,targets[targets.length-1]/100,bt,thalf);
@@ -2360,10 +2561,12 @@ function bindEvents(){
   el("langBtn").onclick=Lang.toggle;
   el("updateBtn")&&(el("updateBtn").onclick=()=>Updater.check(true));
   el("dtvCalc")&&(el("dtvCalc").onclick=renderDTV);
+  el("devGoBtn")&&(el("devGoBtn").onclick=()=>go("deventer"));
   if(el("devVax")){fillDevBt();el("devVax").onchange=fillDevBt;}
   el("devCalc")&&(el("devCalc").onclick=renderDeventerDash);
-  el("devTitres")&&(el("devTitres").oninput=updateDevCount);
   el("devNvac")&&(el("devNvac").onchange=renderDevTargets);
+  el("devAddRow")&&(el("devAddRow").onclick=()=>devAddRow(true));
+  el("devClear")&&(el("devClear").onclick=()=>{el("devTitreTbl").querySelector("tbody").innerHTML="";for(let i=0;i<DEV_MIN_ROWS;i++)devAddRow(false);updateDevCount();});
   el("helpBtn").onclick=showHelp;
   el("searchBtn").onclick=Palette.open;
   el("palInput").oninput=e=>Palette.render(e.target.value);
@@ -2372,6 +2575,7 @@ function bindEvents(){
   const codeFields=["f_farm","f_date","f_sampleno","f_company","f_manager"];
   codeFields.forEach(id=>el(id)&&el(id).addEventListener("input",()=>{const c=el("f_code");if(c.dataset.auto==="1")c.value=suggestCode();}));
   el("f_code").addEventListener("input",e=>{e.target.dataset.auto="0";});
+  el("f_region")&&el("f_region").addEventListener("input",e=>{e.target.dataset.touched="1";});
   el("gpsBtn").onclick=getGPS;el("saveSubBtn").onclick=saveSubmission;el("clearBtn").onclick=resetForm;
   // my submissions
   el("myLabels").onclick=printLabelsBulk;
