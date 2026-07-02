@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Poultry Lab Submission and Results System - manage sample submissions, PCR and serology results, GMT/CV analysis and reports across partner laboratories.">
 <meta name="color-scheme" content="light dark">
-<title>Poultry Lab System v2.7</title>
+<title>Poultry Lab System v2.8</title>
 <style>
 /* ============================================================
    THEME TOKENS  (light default + dark override)
@@ -337,13 +337,14 @@ html[dir="rtl"] .interp-tbl th,html[dir="rtl"] .interp-tbl td{text-align:right}
       <button data-view="new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M12 11v6M9 14h6"/></svg><span data-i18n="nav.new">New Submission</span></button>
       <button data-view="my"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span data-i18n="nav.my">My Submissions</span></button>
       <button data-view="reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg><span data-i18n="nav.reports">Reports</span></button>
+      <button data-view="deventer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 2h6M12 2v4M5 10a7 7 0 1014 0 7 7 0 00-14 0zM12 10v4l2 2"/></svg><span data-i18n="nav.deventer">Deventer</span></button>
       <button data-view="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.6 1.6 0 00-2.7 1.1V21a2 2 0 11-4 0v-.1A1.6 1.6 0 006 19.4l-.1.1a2 2 0 11-2.8-2.8l.1-.1A1.6 1.6 0 003 15H3a2 2 0 110-4h.1A1.6 1.6 0 004.6 9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.6 1.6 0 001.8.3H9.3A1.6 1.6 0 0011 4.6V4a2 2 0 114 0v.1a1.6 1.6 0 002.7 1.1l.1-.1a2 2 0 112.8 2.8l-.1.1a1.6 1.6 0 00-.3 1.8V11a2 2 0 110 4h-.1z"/></svg><span data-i18n="nav.settings">Settings</span></button>
     </nav>
     <div class="sb-foot">
       <button class="theme-toggle" id="langBtn" aria-label="Toggle language" style="margin-bottom:8px"><span>&#127760;</span><span id="langLbl">العربية</span></button>
       <button class="theme-toggle" id="themeBtn" aria-label="Toggle theme"><span id="themeIco"></span><span id="themeLbl">Dark mode</span></button>
       <button class="theme-toggle" id="updateBtn" aria-label="Check for updates" style="margin-top:8px"><span>&#8635;</span><span data-i18n="upd.check">Check for updates</span></button>
-      <div class="ver" id="verLabel">Version 2.7.0</div>
+      <div class="ver" id="verLabel">Version 2.8.0</div>
       <div class="ver" id="updMsg" style="font-size:10px;margin-top:2px"></div>
     </div>
   </aside>
@@ -400,28 +401,6 @@ html[dir="rtl"] .interp-tbl th,html[dir="rtl"] .interp-tbl td{text-align:right}
           </div>
           <div id="dtvResult"></div>
         </div>
-        <div class="card"><h3 data-i18n="dev.title">IBD Vaccination Day (Mon3m - Deventer formula)</h3>
-          <p class="hint" data-i18n="dev.hint" style="margin-bottom:10px">The accurate Deventer method using individual titres (not the mean). Paste at least 18 ELISA titres - one per line, or separated by commas/spaces/tabs (you can paste a column straight from Excel).</p>
-          <div class="row">
-            <div class="fld"><label data-i18n="dev.titres">Individual ELISA titres</label><textarea id="devTitres" rows="5" dir="ltr" placeholder="1224&#10;1456&#10;1821&#10;..." style="width:100%;font-family:monospace;resize:vertical"></textarea>
-              <div class="hint" id="devCount" style="margin-top:4px"></div></div>
-            <div>
-              <div class="row" style="grid-template-columns:1fr 1fr">
-                <div class="fld"><label data-i18n="dev.bird">Bird type</label><select id="devBird"><option value="broiler" data-i18n="dtv.broiler">Broiler</option><option value="breeder" data-i18n="dtv.breeder">Breeder</option><option value="layer" data-i18n="dtv.layer">Layer</option></select></div>
-                <div class="fld"><label data-i18n="dev.age">Age at sampling (days)</label><input id="devAge" type="number" min="0" value="1"></div>
-              </div>
-              <div class="row" style="grid-template-columns:1fr 1fr">
-                <div class="fld"><label data-i18n="dev.cut">Target flock %</label><select id="devCut"><option value="0.75" selected>75%</option><option value="0.90">90%</option><option value="0.70">70%</option><option value="0.40">40%</option><option value="0.25">25%</option></select></div>
-                <div class="fld"><label data-i18n="dev.vax">Vaccine class</label><select id="devVax"><option value="intermediate" data-i18n="dev.interm">Intermediate</option><option value="plus" data-i18n="dev.plus">Intermediate Plus</option><option value="hot" data-i18n="dev.hot">Hot strain</option></select></div>
-              </div>
-              <div class="row" style="grid-template-columns:1fr 1fr">
-                <div class="fld"><label data-i18n="dev.bt">Breakthrough titre</label><select id="devBt"></select></div>
-                <div class="fld" style="display:flex;align-items:flex-end"><button class="btn" id="devCalc" style="width:100%" data-i18n="dev.calc">Calculate</button></div>
-              </div>
-            </div>
-          </div>
-          <div id="devResult"></div>
-        </div>
       </section>
 
       <!-- NEW SUBMISSION -->
@@ -432,9 +411,14 @@ html[dir="rtl"] .interp-tbl th,html[dir="rtl"] .interp-tbl td{text-align:right}
             <div class="fld"><label data-i18n="new.company">Company / Client name *</label><input id="f_company" list="dl_company" data-i18n-ph="ph.company" placeholder="e.g. Fakieh / Aryash"><datalist id="dl_company"></datalist></div>
             <div class="fld"><label data-i18n="new.farm">Farm name *</label><input id="f_farm" list="dl_farm" placeholder="e.g. Akhaween Farm"><datalist id="dl_farm"></datalist></div>
           </div>
+          <div class="row3">
+            <div class="fld"><label data-i18n="new.date">Sample date</label><input id="f_date" type="date"></div>
+            <div class="fld"><label data-i18n="new.sampleNo">Sample number</label><input id="f_sampleno" placeholder="e.g. 001"></div>
+            <div class="fld"><label data-i18n="new.manager">Region manager</label><input id="f_manager" list="dl_manager" placeholder="e.g. Mohamed Amer"><datalist id="dl_manager"></datalist></div>
+          </div>
           <div class="row">
             <div class="fld"><label data-i18n="new.sampleDesc">Sample description</label><input id="f_sample" placeholder="e.g. Serum - House BF7A, 20 birds"></div>
-            <div class="fld"><label data-i18n="new.code">Sample code</label><input id="f_code" placeholder="auto - editable"><div class="hint" data-i18n="new.codeHint">Auto from lab + farm + date. Editable.</div></div>
+            <div class="fld"><label data-i18n="new.code">Sample code</label><input id="f_code" placeholder="auto - editable"><div class="hint" data-i18n="new.codeHint">Auto from date + sample no. + lab + company + manager. Editable.</div></div>
           </div>
           <div class="row3">
             <div class="fld"><label data-i18n="new.cmethod">Contact method</label><select id="f_cmethod"></select></div>
@@ -560,8 +544,34 @@ html[dir="rtl"] .interp-tbl th,html[dir="rtl"] .interp-tbl td{text-align:right}
         </div>
       </section>
 
+      <section id="v-deventer" class="view">
+        <div class="page-h"><h2 data-i18n="dev.pageTitle">IBD Vaccination Day - Deventer (Mon3m)</h2><p data-i18n="dev.pageSub">The accurate Deventer method using individual titres. Supports multiple vaccinations with different flock percentiles.</p></div>
+        <div class="card">
+          <p class="hint" data-i18n="dev.hint" style="margin-bottom:10px">Paste at least 18 ELISA titres - one per line, or separated by commas/spaces/tabs (you can paste a column straight from Excel).</p>
+          <div class="row">
+            <div class="fld"><label data-i18n="dev.titres">Individual ELISA titres</label><textarea id="devTitres" rows="8" dir="ltr" placeholder="1224&#10;1456&#10;1821&#10;..." style="width:100%;font-family:monospace;resize:vertical"></textarea>
+              <div class="hint" id="devCount" style="margin-top:4px"></div></div>
+            <div>
+              <div class="row" style="grid-template-columns:1fr 1fr">
+                <div class="fld"><label data-i18n="dev.bird">Bird type</label><select id="devBird"><option value="broiler" data-i18n="dtv.broiler">Broiler</option><option value="breeder" data-i18n="dtv.breeder">Breeder</option><option value="layer" data-i18n="dtv.layer">Layer</option></select></div>
+                <div class="fld"><label data-i18n="dev.age">Age at sampling (days)</label><input id="devAge" type="number" min="0" value="1"></div>
+              </div>
+              <div class="row" style="grid-template-columns:1fr 1fr">
+                <div class="fld"><label data-i18n="dev.vax">Vaccine class</label><select id="devVax"><option value="intermediate" data-i18n="dev.interm">Intermediate</option><option value="plus" data-i18n="dev.plus">Intermediate Plus</option><option value="hot" data-i18n="dev.hot">Hot strain</option></select></div>
+                <div class="fld"><label data-i18n="dev.bt">Breakthrough titre</label><select id="devBt"></select></div>
+              </div>
+              <div class="fld"><label data-i18n="dev.nvac">Number of vaccinations</label><select id="devNvac"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
+              <div class="fld"><label data-i18n="dev.targets">Target flock % (one per vaccination, editable)</label><div id="devTargets" class="row3" style="margin-top:4px"></div></div>
+              <button class="btn dev-calc-btn" id="devCalc" style="width:100%;margin-top:6px" data-i18n="dev.calc">Calculate vaccination day(s)</button>
+            </div>
+          </div>
+          <div id="devResult"></div>
+        </div>
+      </section>
+
+
       <div class="foot">
-        Poultry Lab System v2.7 &middot; Local working copy - all data is saved in this browser only. Attachments are stored as links.<br>
+        Poultry Lab System v2.8 &middot; Local working copy - all data is saved in this browser only. Attachments are stored as links.<br>
         Labs: Vetbio Global (KSA) &middot; Royal GD (NL) &middot; ANICON/SAN Group (DE) &middot; x-OvO Flockscreen.
       </div>
     </div>
@@ -576,7 +586,7 @@ html[dir="rtl"] .interp-tbl th,html[dir="rtl"] .interp-tbl td{text-align:right}
 <script>
 "use strict";
 /* Build metadata - single source of truth for version display + update checks */
-const BUILD={version:"2.7.1",date:"2026-07-02",label:"v2.7.1 (2026-07-02)"};
+const BUILD={version:"2.8.0",date:"2026-07-02",label:"v2.8.0 (2026-07-02)"};
 /* ============================================================================
    POULTRY LAB SYSTEM  v2.7
    Single-file offline app. Organised into small modules:
@@ -670,6 +680,7 @@ const Store=(()=>{
     contactMethods:["Phone","WhatsApp","Email"],
     diseases:["IB","ND","IBD","H9","AI","ART","Reovirus","MG","MS","ILT","Marek","Coryza","Chlamydia","Histomonas","FAdV","CAV","Other"],
     regions:[],
+    managers:[],
     extraTests:{},customLabs:{}
   };
   let DB=[], CONFIG={}, AUDIT=[], TOMB={};
@@ -782,7 +793,7 @@ const Lang=(()=>{
   const DICT={
     ar:{
       "nav.dash":"لوحة التحكم","nav.new":"عينة جديدة","nav.my":"عيناتي",
-      "nav.reports":"التقارير","nav.settings":"الإعدادات",
+      "nav.reports":"التقارير","nav.settings":"الإعدادات","nav.deventer":"Deventer",
       "search.everything":"ابحث عن أي شيء...",
       "dash.title":"لوحة التحكم","dash.sub":"نظرة حية على المعامل الشريكة.",
       "dash.qnew":"عينة جديدة","dash.qnewd":"إنشاء طلب","dash.qmy":"عيناتي","dash.qmyd":"إدخال النتائج",
@@ -799,11 +810,15 @@ const Lang=(()=>{
       "dev.hint":"طريقة Deventer الدقيقة بالتيترات الفردية (مش المتوسط). الصق 18 تيتر ELISA على الأقل - كل واحد في سطر، أو مفصولين بفواصل/مسافات (تقدر تلصق عمود مباشرة من Excel).",
       "dev.titres":"التيترات الفردية (ELISA)","dev.bird":"نوع الطائر","dev.age":"عمر سحب العينة (يوم)",
       "dev.cut":"نسبة الفلوك المستهدفة","dev.vax":"نوع اللقاح","dev.bt":"عتبة الاختراق",
-      "dev.interm":"Intermediate","dev.plus":"Intermediate Plus","dev.hot":"Hot strain","dev.calc":"احسب يوم التحصين",
+      "dev.interm":"Intermediate","dev.plus":"Intermediate Plus","dev.hot":"Hot strain","dev.calc":"احسب أيام التحصين",
+      "dev.pageTitle":"يوم تحصين الجمبورو - Deventer (Mon3m)",
+      "dev.pageSub":"طريقة Deventer الدقيقة بالتيترات الفردية. تدعم تحصينات متعددة بنِسب فلوك مختلفة.",
+      "dev.nvac":"عدد مرات التحصين","dev.targets":"نسبة الفلوك المستهدفة (واحدة لكل تحصينة، قابلة للتعديل)",
       "new.title":"عينة جديدة","new.sub":"العميل والعينة \u2190 اختر المعمل \u2190 نموذج المعمل والاختبارات.",
       "new.s1":"1 \u00b7 العميل والعينة","new.s2":"2 \u00b7 اختر المعمل","new.s4":"4 \u00b7 الاختبارات المطلوبة",
       "ph.company":"مثال: الفقيه / أرياش","new.company":"اسم الشركة / العميل *","new.farm":"اسم المزرعة *","new.sampleDesc":"وصف العينة",
-      "new.code":"كود العينة","new.codeHint":"تلقائي من المعمل + المزرعة + التاريخ. قابل للتعديل.",
+      "new.code":"كود العينة","new.codeHint":"تلقائي من التاريخ + رقم العينة + المعمل + العميل + مدير المنطقة. قابل للتعديل.",
+      "new.date":"تاريخ العينة","new.sampleNo":"رقم العينة","new.manager":"مدير المنطقة",
       "new.cmethod":"طريقة التواصل","new.cdetails":"بيانات التواصل","new.location":"الموقع (رابط خريطة / عنوان)",
       "new.gps":"استخدم موقع GPS الحالي","new.birdType":"نوع الطائر","new.age":"العمر عند أخذ العينة (يوم)",
       "new.region":"المنطقة / المحافظة","new.lab":"المعمل *","new.testsHint":"كل اختبار موسوم PCR أو Serology - وده بيحدد طريقة إدخال النتيجة.",
@@ -959,7 +974,7 @@ const Sync=(()=>{
   }
   return{init(){cfg=loadCfg();},enabled,saveCfg,getCfg:()=>cfg,syncNow,schedulePush,status};
 })();
-const VIEWS=["dash","new","my","reports","settings"];
+const VIEWS=["dash","new","my","reports","deventer","settings"];
 function go(v){
   if(!VIEWS.includes(v))v="dash";
   $$(".sb-nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===v));
@@ -970,6 +985,7 @@ function go(v){
   if(v==="reports")renderReports();
   if(v==="settings")renderSettings();
   if(v==="new")initNewForm();
+  if(v==="deventer")initDeventerView();
   closeSidebar();window.scrollTo(0,0);
 }
 
@@ -983,14 +999,21 @@ function initNewForm(){
   el("f_cmethod").innerHTML=CONFIG().contactMethods.map(c=>`<option>${esc(c)}</option>`).join("");
   const labSel=el("f_lab");
   labSel.innerHTML=`<option value="">- Select a laboratory -</option>`+Object.keys(allLabs()).map(k=>`<option value="${k}">${esc(getLab(k).full)}</option>`).join("");
+  el("dl_manager").innerHTML=(CONFIG().managers||[]).map(c=>`<option value="${esc(c)}">`).join("");
+  if(el("f_date")&&!el("f_date").value)el("f_date").value=today();
 }
 function suggestCode(){
   const lab=el("f_lab").value;
-  const farm=(el("f_farm").value||"FARM").toUpperCase().replace(/\s+/g,"").slice(0,8);
-  const abbr=lab?getLab(lab).abbr:"XX";
-  const seq=String(DB().length+1).padStart(3,"0");
-  const dt=today().replace(/-/g,"").slice(2);
-  return `${dt}-${seq}-${abbr}-${farm}`;
+  const clean=(v,d)=>(v||d).trim().replace(/\s+/g,"_");
+  const dateV=el("f_date").value||today();
+  const dt=dateV.replace(/-/g,"").slice(2); // YYMMDD
+  const seq=el("f_sampleno").value.trim()||String(DB().length+1).padStart(3,"0");
+  const labName=lab?getLab(lab).abbr:"XX";
+  const company=clean(el("f_company").value,"CO");
+  const manager=clean(el("f_manager").value,"");
+  const parts=[dt,seq,labName,company];
+  if(manager)parts.push(manager);
+  return parts.join("-");
 }
 function renderLabForm(){
   const lab=el("f_lab").value, host=el("labFormHost"), codeEl=el("f_code");
@@ -1040,17 +1063,21 @@ function saveSubmission(){
   if(farm&&!cfg.farms.includes(farm))cfg.farms.push(farm);
   const region=val("f_region");
   if(region&&!(cfg.regions||(cfg.regions=[])).includes(region))cfg.regions.push(region);
+  const manager=val("f_manager");
+  if(manager&&!(cfg.managers||(cfg.managers=[])).includes(manager))cfg.managers.push(manager);
+  const sampleDate=el("f_date").value||today();
   const code=val("f_code")||suggestCode();
   DB().unshift({id:uid(),code,company,farm,sample:val("f_sample"),cmethod:val("f_cmethod"),cvalue:val("f_cvalue"),
-    location:val("f_location"),birdType:val("f_birdtype"),ageDays:val("f_age"),region,
-    lab,form,tests,status:"New",created:today(),results:{},reportLink:"",updatedAt:Date.now()});
+    location:val("f_location"),birdType:val("f_birdtype"),ageDays:val("f_age"),region,manager,sampleNo:val("f_sampleno"),
+    lab,form,tests,status:"New",created:sampleDate,results:{},reportLink:"",updatedAt:Date.now()});
   Store.save("create","Created "+code);
   Toast.show("Submission "+code+" created.","ok");
   resetForm();go("my");
 }
 function resetForm(){
-  ["f_company","f_farm","f_sample","f_code","f_cvalue","f_location","f_age","f_region"].forEach(id=>el(id).value="");
+  ["f_company","f_farm","f_sample","f_code","f_cvalue","f_location","f_age","f_region","f_sampleno","f_manager"].forEach(id=>el(id)&&(el(id).value=""));
   el("f_lab").value="";el("f_birdtype").value="";el("f_code").dataset.auto="1";el("gpsMsg").textContent="";el("saveMsg").textContent="";
+  if(el("f_date"))el("f_date").value=today();
   renderLabForm();
 }
 function getGPS(){
@@ -1882,7 +1909,7 @@ function renderDTV(){
     <div class="hint" style="margin-top:6px">${ar?"نصف عمر الأجسام المضادة المستخدم: ":"Half-life used: "}${HALF_LIFE[bird]} ${ar?"يوم":"days"} &middot; ${ar?"العمر عند السحب: ":"Bleed age: "}D${bleed} &middot; ${ar?"الهدف: ":"target: "}${target}</div>
     <div class="hint" style="margin-top:4px;color:var(--amber-d)">${ar?"تقدير إرشادي - أكّد بنتائج المعمل الفعلية وظروف مزرعتك.":"Guidance estimate - confirm with actual lab results and your farm conditions."}</div></div>`;
 }
-/* ---- Standalone Deventer (Mon3m) calculator on the dashboard ---- */
+/* ---- Standalone Deventer (Mon3m) view with multi-vaccination support ---- */
 function parseTitres(text){
   return (text||"").split(/[\s,;]+/).map(s=>parseFloat(s)).filter(v=>!isNaN(v)&&v>0);
 }
@@ -1895,22 +1922,53 @@ function updateDevCount(){
   if(!c)return;c.textContent=(ar?"عدد التيترات: ":"Titres entered: ")+n+(n<18?(ar?" (لازم 18 على الأقل)":" (need at least 18)"):" ✓");
   c.style.color=n<18?"var(--red)":"var(--green)";
 }
+/* Suggested target percentiles per number of vaccinations (editable defaults) */
+function suggestedTargets(nvac){
+  const map={1:[75],2:[40,90],3:[25,50,75],4:[20,45,70,90]};
+  return map[nvac]||[75];
+}
+function renderDevTargets(){
+  const host=el("devTargets");if(!host)return;
+  const n=parseInt(el("devNvac").value)||1;
+  const cur=$$(".dev-target",host).map(i=>i.value);
+  const sug=suggestedTargets(n);
+  host.innerHTML="";
+  for(let i=0;i<n;i++){
+    const val=cur[i]!==undefined?cur[i]:sug[i];
+    const fld=document.createElement("div");fld.className="fld";
+    fld.innerHTML=`<label style="font-size:11px">${Lang.current()==="ar"?"تحصينة ":"Vac "}${i+1} %</label><input class="dev-target" type="number" min="1" max="99" value="${val}">`;
+    host.appendChild(fld);
+  }
+}
+function initDeventerView(){
+  if(el("devVax")){fillDevBt();}
+  renderDevTargets();updateDevCount();
+}
 function renderDeventerDash(){
   const ar=Lang.current()==="ar";const host=el("devResult");
   const titres=parseTitres(el("devTitres").value);
-  const bird=el("devBird").value,age=parseFloat(el("devAge").value)||0,cut=parseFloat(el("devCut").value),bt=parseFloat(el("devBt").value);
+  const bird=el("devBird").value,age=parseFloat(el("devAge").value)||0,bt=parseFloat(el("devBt").value);
   const thalf=DEV_HALFLIFE[bird];
   if(titres.length<18){host.innerHTML=`<div class="hint" style="color:var(--red);margin-top:8px">${ar?`عدد التيترات ${titres.length} - لازم 18 على الأقل (شرط Deventer).`:`Only ${titres.length} titres - Deventer requires at least 18.`}</div>`;return;}
-  const day=deventerDay(titres,age,cut,bt,thalf);
-  const gapDay=deventerDay(titres,age,0.25,bt,thalf);
-  const gap=(day!=null&&gapDay!=null)?(day-gapDay):null;
-  const vacAge=Math.round(day);
-  let warn="";
-  if(gap!=null&&gap>=6)warn=`<div class="hint" style="color:var(--amber-d);margin-top:6px">${ar?`الفجوة ${Math.round(gap)} يوم بين أقل 25% و${Math.round(cut*100)}% كبيرة - تجانس ضعيف؛ فكّر في تحصين مزدوج لتغطية الطيور منخفضة التيتر.`:`Gap of ${Math.round(gap)} days between lowest 25% and ${Math.round(cut*100)}% is large - poor uniformity; consider a double vaccination.`}</div>`;
-  host.innerHTML=`<div class="dtv-box" style="margin-top:12px"><div class="big">${ar?"يوم التحصين المقترح: عمر ":"Suggested vaccination: day "}${vacAge}</div>
-    <div class="hint" style="margin-top:6px">${ar?"أي بعد ":"i.e. "}${Math.round(day-age)} ${ar?"يوم من السحب":"days after sampling"} &middot; ${ar?"الطائر":"bird"}: ${bird} (T&frac12;=${thalf}${ar?"يوم":"d"}) &middot; ${ar?"العتبة":"breakthrough"}: ${bt} &middot; ${ar?"النسبة":"target"}: ${Math.round(cut*100)}% &middot; n=${titres.length}</div>
-    ${warn}
-    <div class="hint" style="margin-top:6px;color:var(--amber-d)">${ar?"معادلة Deventer (de Wit) - تفترض معايرة IDEXX. أكّد بضغط العدوى الحقلي والحالة الإكلينيكية.":"Deventer (de Wit) formula - assumes IDEXX calibration. Confirm with field pressure and clinical status."}</div></div>`;
+  const targets=$$(".dev-target").map(i=>Math.max(1,Math.min(99,parseFloat(i.value)||75))).sort((a,b)=>a-b);
+  let rows="";
+  targets.forEach((pct,i)=>{
+    const day=deventerDay(titres,age,pct/100,bt,thalf);
+    const vacAge=Math.round(day),after=Math.round(day-age);
+    rows+=`<tr><td><b>${ar?"تحصينة ":"Vac "}${i+1}</b></td><td>${pct}%</td><td><b style="color:var(--amber-d)">${ar?"عمر ":"day "}${vacAge}</b></td><td>${after} ${ar?"يوم بعد السحب":"d after sampling"}</td></tr>`;
+  });
+  // gap between lowest and highest target
+  let gapNote="";
+  if(targets.length>=2){
+    const lo=deventerDay(titres,age,targets[0]/100,bt,thalf),hi=deventerDay(titres,age,targets[targets.length-1]/100,bt,thalf);
+    const gap=Math.round(hi-lo);
+    if(gap>=6)gapNote=`<div class="hint" style="color:var(--amber-d);margin-top:6px">${ar?`الفجوة ${gap} يوم بين أول وآخر تحصينة كبيرة - تجانس ضعيف؛ التحصين المتعدد هنا مفيد لتغطية كل الفلوك.`:`Gap of ${gap} days between first and last vaccination - poor uniformity; multiple vaccinations help cover the whole flock.`}</div>`;
+  }
+  host.innerHTML=`<div class="dtv-box" style="margin-top:12px">
+    <table class="interp-tbl" style="margin:0"><tr><th></th><th>${ar?"النسبة":"Target"}</th><th>${ar?"يوم التحصين":"Vaccination day"}</th><th>${ar?"بعد السحب":"After sampling"}</th></tr>${rows}</table>
+    ${gapNote}
+    <div class="hint" style="margin-top:8px">${ar?"الطائر":"Bird"}: ${bird} (T&frac12;=${thalf}${ar?"يوم":"d"}) &middot; ${ar?"العتبة":"breakthrough"}: ${bt} &middot; n=${titres.length}</div>
+    <div class="hint" style="margin-top:4px;color:var(--amber-d)">${ar?"معادلة Deventer (de Wit) - تفترض معايرة IDEXX. أكّد بضغط العدوى الحقلي والحالة الإكلينيكية.":"Deventer (de Wit) formula - assumes IDEXX calibration. Confirm with field pressure and clinical status."}</div></div>`;
 }
 
 function renderDash(){
@@ -2305,12 +2363,14 @@ function bindEvents(){
   if(el("devVax")){fillDevBt();el("devVax").onchange=fillDevBt;}
   el("devCalc")&&(el("devCalc").onclick=renderDeventerDash);
   el("devTitres")&&(el("devTitres").oninput=updateDevCount);
+  el("devNvac")&&(el("devNvac").onchange=renderDevTargets);
   el("helpBtn").onclick=showHelp;
   el("searchBtn").onclick=Palette.open;
   el("palInput").oninput=e=>Palette.render(e.target.value);
   // new submission
   el("f_lab").onchange=renderLabForm;
-  el("f_farm").addEventListener("input",()=>{const c=el("f_code");if(c.dataset.auto==="1")c.value=suggestCode();});
+  const codeFields=["f_farm","f_date","f_sampleno","f_company","f_manager"];
+  codeFields.forEach(id=>el(id)&&el(id).addEventListener("input",()=>{const c=el("f_code");if(c.dataset.auto==="1")c.value=suggestCode();}));
   el("f_code").addEventListener("input",e=>{e.target.dataset.auto="0";});
   el("gpsBtn").onclick=getGPS;el("saveSubBtn").onclick=saveSubmission;el("clearBtn").onclick=resetForm;
   // my submissions
